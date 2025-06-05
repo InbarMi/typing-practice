@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+
+.text {
+  font-family: monospace;
+  font-size: 28px;
+  opacity: 70%;
+  color: #667660;
+}
