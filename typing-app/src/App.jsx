@@ -2,27 +2,26 @@ import {useEffect, useState} from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [text, setText] = useState('Hello World!');
-  const [textIndex, setTextIndex] = useState(0);
-  const [inputKey, setInputKey] = useState('');
-
-  const handleInputKey = (event) => {
-      setInputKey(event.key);
-      console.log(event.key);
-  }
     const [count, setCount] = useState(0);
     const [text, setText] = useState('Hello World!');
     const [textIndex, setTextIndex] = useState(0);
     const [inputKey, setInputKey] = useState('');
+    const [correctIndices, setCorrectIndices] = useState([]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
-            setInputKey(event.key);
-            console.log(event.key);
             const key = event.key;
             const currentIndex = textIndex;
 
+            setCorrectIndices(prevState => {
+                const updated = [...prevState];
+                if (key === text[currentIndex]) {
+                    updated[currentIndex] = true;
+                } else if (key.length === 1) {
+                    updated[currentIndex] = false;
+                }
+                return updated;
+            })
 
             // shift cursor
             if (key === 'Backspace') {
@@ -30,6 +29,13 @@ function App() {
                 setTextIndex(prevIndex => {
                     const newIndex = Math.max(0, prevIndex - 1);
 
+                    setCorrectIndices(prevState => {
+                        const updated = [...prevState];
+                        updated[newIndex] = null;
+                        return updated;
+                    });
+                    return newIndex;
+                });
             } else if (key.length === 1) {
                 setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
             }
@@ -44,33 +50,17 @@ function App() {
         }
     }, [textIndex, text]);
 
-  return (
-    <>
-      <h1>Type What You See :)</h1>
-      <div className="text">
-          {text.split('').map((char, index) => (
-              <span key={index}>
-                  {index === textIndex && <span className="cursor" />}
-                  <span key={index} className={index < textIndex ? 'typed' : ''}>{char}</span>
-              </span>
-          ))}
-          <p className="text">{inputKey}</p>
-      </div>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
-  )
     return (
         <>
             <h1>Type What You See :)</h1>
             <div className="text">
                 {text.split('').map((char, index) => {
                     const cursorPosition = index === textIndex;
+                    const isCorrect = correctIndices[index];
 
                     let className = '';
+                    if (isCorrect === true) className = 'correct';
+                    else if (isCorrect === false) className = 'incorrect';
 
                     return (
                         <span key={index}>
