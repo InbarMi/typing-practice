@@ -1,12 +1,20 @@
-import {useEffect, useState} from 'react'
-import './App.css'
+import {useEffect, useState} from 'react';
+import './App.css';
 
 function App() {
-    const [count, setCount] = useState(0);
     const [text, setText] = useState('Hello World!');
     const [textIndex, setTextIndex] = useState(0);
     const [inputKey, setInputKey] = useState('');
     const [correctIndices, setCorrectIndices] = useState([]);
+    const [selectedFont, setSelectedFont] = useState('monospace');
+    const [showFontMenu, setShowFontMenu] = useState(false);
+
+    const fontOptions = ['monospace', 'serif', 'sans-serif'];
+
+    const handleFontSelect = (font) => {
+        setSelectedFont(font);
+        setShowFontMenu(false);
+    }
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -52,23 +60,41 @@ function App() {
 
     return (
         <>
-            <h1>Type What You See :)</h1>
-            <div className="text">
-                {text.split('').map((char, index) => {
-                    const cursorPosition = index === textIndex;
-                    const isCorrect = correctIndices[index];
+            <div className="menu-bar">
+                <div className="dropdown">
+                    <button onClick={() => setShowFontMenu(prev => !prev)}>
+                        Pick a font
+                    </button>
+                    { showFontMenu && (
+                        <ul className="dropdown-menu">
+                            {fontOptions.map(font => (
+                                <li key={font} onClick={() => handleFontSelect(font)}>
+                                    {font}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            </div>
+            <div className="main-content" style={{fontFamily: selectedFont}}>
+                <h1>Type What You See :)</h1>
+                <div className="text">
+                    {text.split('').map((char, index) => {
+                        const cursorPosition = index === textIndex;
+                        const isCorrect = correctIndices[index];
 
-                    let className = '';
-                    if (isCorrect === true) className = 'correct';
-                    else if (isCorrect === false) className = 'incorrect';
+                        let className = '';
+                        if (isCorrect === true) className = 'correct';
+                        else if (isCorrect === false) className = 'incorrect';
 
-                    return (
-                        <span key={index}>
-                      {cursorPosition && <span className="cursor"/>}
-                            <span className={className}>{char}</span>
-                  </span>
-                    );
-                })}
+                        return (
+                            <span key={index}>
+                                {cursorPosition && <span className="cursor"/>}
+                                <span className={className}>{char}</span>
+                            </span>
+                        );
+                    })}
+                </div>
             </div>
         </>
     )
