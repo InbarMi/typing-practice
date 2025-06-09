@@ -1,10 +1,8 @@
 import {useEffect, useState} from 'react';
 import './App.css';
-import './TextBlock.jsx';
-import TextBlock from "./TextBlock.jsx";
+import TextBlock from './TextBlock.jsx';
 
 function App() {
-    const [inputKey, setInputKey] = useState('');
     const [selectedFont, setSelectedFont] = useState('monospace');
     const [showFontMenu, setShowFontMenu] = useState(false);
 
