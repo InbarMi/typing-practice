@@ -14,6 +14,10 @@ function TextBlock( { totalTime, currentTime, setCurrentTime }) {
             const key = event.key;
             const currentIndex = textIndex;
 
+            if (!startTimer) {
+                setStartTimer(true);
+            }
+
             setCorrectIndices(prevState => {
                 const updated = [...prevState];
                 if (key === text[currentIndex]) {
@@ -49,7 +53,7 @@ function TextBlock( { totalTime, currentTime, setCurrentTime }) {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         }
-    }, [textIndex, text]);
+    }, [textIndex, text, startTimer]);
 
     return (
         <div className="text">
