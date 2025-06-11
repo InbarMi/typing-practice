@@ -4,13 +4,14 @@ import './App.css'
 function Timer({ startTimer, currentTime, setCurrentTime }) {
 
     useEffect(() => {
-        if (startTimer) {
-            const countdownInterval = setInterval(() => {
-                return setCurrentTime(prevTime => Math.max(0, prevTime - 1));
-            }, 1000)
+        if (!startTimer || currentTime <= 0) return;
 
-            return () => clearInterval(countdownInterval);
-        }
+        const countdownInterval = setInterval(() => {
+            return setCurrentTime(prevTime => prevTime - 1);
+        }, 1000)
+
+        return () => clearInterval(countdownInterval);
+
     }, [startTimer]);
 
     return (
