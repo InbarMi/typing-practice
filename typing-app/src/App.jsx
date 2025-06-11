@@ -1,12 +1,16 @@
 import {useEffect, useState} from 'react';
 import './App.css';
 import TextBlock from './TextBlock.jsx';
+import Stats from './Stats.jsx';
 
 function App() {
-    const [selectedFont, setSelectedFont] = useState('monospace');
-    const [showFontMenu, setShowFontMenu] = useState(false);
 
     const fontOptions = ['monospace', 'serif', 'sans-serif'];
+    const initialTime = 30;
+
+    const [selectedFont, setSelectedFont] = useState('monospace');
+    const [showFontMenu, setShowFontMenu] = useState(false);
+    const [currentTime, setCurrentTime] = useState(initialTime);
 
     const handleFontSelect = (font) => {
         setSelectedFont(font);
@@ -14,7 +18,7 @@ function App() {
     }
 
     return (
-        <>
+        <div className='app-body' style={{fontFamily: selectedFont}}>
             <div className="menu-bar">
                 <div className="dropdown">
                     <button onClick={() => setShowFontMenu(prev => !prev)}>
@@ -31,11 +35,17 @@ function App() {
                     )}
                 </div>
             </div>
-            <div className="main-content" style={{fontFamily: selectedFont}}>
-                <h1>Type What You See :)</h1>
-                <TextBlock />
+            <h1 className="title">Type What You See :)</h1>
+            <div className="main-content">
+                {
+                    (currentTime === 0) ? (
+                        <Stats />
+                    ) : (
+                        <TextBlock currentTime={currentTime} setCurrentTime={setCurrentTime} />
+                    )
+                }
             </div>
-        </>
+        </div>
     )
 }
 

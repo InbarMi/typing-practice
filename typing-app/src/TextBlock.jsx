@@ -2,11 +2,12 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import Timer from './Timer.jsx';
 
-function TextBlock() {
+function TextBlock( { totalTime, currentTime, setCurrentTime }) {
     const [text, setText] = useState('Hello World!');
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
     const [inputKey, setInputKey] = useState('');
+    const [startTimer, setStartTimer] = useState(false);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -52,7 +53,7 @@ function TextBlock() {
 
     return (
         <div className="text">
-            <Timer startTimer={true} totalTime={30} />
+            <Timer totalTime={totalTime} startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
             {text.split('').map((char, index) => {
                 const cursorPosition = index === textIndex;
                 const isCorrect = correctIndices[index];
@@ -63,9 +64,9 @@ function TextBlock() {
 
                 return (
                     <span key={index}>
-                                {cursorPosition && <span className="cursor"/>}
+                        {cursorPosition && <span className="cursor"/>}
                         <span className={className}>{char}</span>
-                            </span>
+                    </span>
                 );
             })}
         </div>

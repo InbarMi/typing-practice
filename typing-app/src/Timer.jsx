@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
 import './App.css'
 
-function Timer({totalTime, startTimer}) {
-
-    const [currentTime, setCurrentTime] = useState(totalTime);
+function Timer({ startTimer, currentTime, setCurrentTime }) {
 
     useEffect(() => {
         if (startTimer) {
@@ -15,13 +13,11 @@ function Timer({totalTime, startTimer}) {
         }
     }, [startTimer]);
 
-
-
     return (
         <div className='timer'>
             {currentTime}
         </div>
-    )
+    );
 }
 
 export default Timer
