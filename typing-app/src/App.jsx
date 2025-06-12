@@ -41,7 +41,7 @@ function App() {
                     (currentTime === 0) ? (
                         <Stats />
                     ) : (
-                        <TextBlock currentTime={currentTime} setCurrentTime={setCurrentTime} />
+                        <TextBlock currentTime={currentTime} setCurrentTime={setCurrentTime} difficulty='beginner' />
                     )
                 }
             </div>

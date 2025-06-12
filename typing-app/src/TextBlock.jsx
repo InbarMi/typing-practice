@@ -2,13 +2,14 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import Timer from './Timer.jsx';
 
-function TextBlock( { totalTime, currentTime, setCurrentTime }) {
-    const [text, setText] = useState('Hello World!');
+function TextBlock( { currentTime, setCurrentTime, difficulty }) {
+    const [text, setText] = useState('');
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
-    const [inputKey, setInputKey] = useState('');
+    // const [inputKey, setInputKey] = useState('');
     const [startTimer, setStartTimer] = useState(false);
 
+    // keydown listener setup
     useEffect(() => {
         const handleKeyDown = (event) => {
             const key = event.key;
@@ -45,7 +46,7 @@ function TextBlock( { totalTime, currentTime, setCurrentTime }) {
                 setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
             }
 
-            setInputKey(key);
+            // setInputKey(key);
             console.log(key);
         }
         document.addEventListener('keydown', handleKeyDown);
@@ -55,9 +56,21 @@ function TextBlock( { totalTime, currentTime, setCurrentTime }) {
         }
     }, [textIndex, text, startTimer]);
 
+    // fetch text file
+    useEffect(() => {
+        fetch(`../public/texts/${difficulty}.txt`)
+            .then((res) => res.text())
+            .then((data) => {
+                const sentences = data.split('\n');
+                const randomIndex = [Math.floor(Math.random() * sentences.length)];
+                setText(sentences[randomIndex]);
+            })
+            .catch((err) => console.error('Error loading text: ', err));
+    }, [difficulty]);
+
     return (
         <div className="text">
-            <Timer totalTime={totalTime} startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
+            <Timer startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
             {text.split('').map((char, index) => {
                 const cursorPosition = index === textIndex;
                 const isCorrect = correctIndices[index];
