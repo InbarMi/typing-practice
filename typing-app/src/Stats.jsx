@@ -3,12 +3,13 @@ import './App.css'
 
 function Stats({ stats }) {
 
-    const { totalTyped, totalCorrect, TotalCharacters } = stats;
+    const { totalTyped, totalCorrect, time } = stats;
     const accuracy = Math.round((totalCorrect / totalTyped) * 100);
+    const wpm = Math.round((totalTyped / 5) / (time / 60));
 
     return (
         <div className='stats'>
-            <p>WPM: N/A </p>
+            <p>WPM: {wpm} </p>
             <p>Accuracy: {accuracy}% </p>
         </div>
     )

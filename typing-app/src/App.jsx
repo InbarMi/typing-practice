@@ -14,7 +14,7 @@ function App() {
     const [stats, setStats] = useState({
         totalTyped: 0,
         totalCorrect: 0,
-        totalCharacters: 0
+        time: initialTime
     });
 
     const handleFontSelect = (font) => {

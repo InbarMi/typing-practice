@@ -34,6 +34,7 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
             }
 
             if (key.length === 1) {
+                setTotalTyped(prev => prev + 1);
                 setCorrectIndices(prevState => {
                     const updated = [...prevState];
                     if (key === text[currentIndex]) {
@@ -42,7 +43,6 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
                     } else {
                         updated[currentIndex] = false;
                     }
-                    setTotalTyped(prev => prev + 1);
                     return updated;
                 })
                 if (key !== 'Backspace') {
@@ -82,10 +82,6 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
     useEffect(() => {
         if (currentTime > 0 && textIndex === text.length - 1) {
             getRandomSentence().then(sentence => {
-                setStats(prev => ({
-                    ...prev,
-                    totalCharacters: prev.totalCharacters + sentence.length
-                }));
                 setText(sentence);
                 setTextIndex(0)
                 setCorrectIndices([]);
