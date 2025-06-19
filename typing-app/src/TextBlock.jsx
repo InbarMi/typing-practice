@@ -9,6 +9,19 @@ function TextBlock( { currentTime, setCurrentTime, difficulty }) {
     // const [inputKey, setInputKey] = useState('');
     const [startTimer, setStartTimer] = useState(false);
 
+    const getRandomSentence = async () => {
+        try {
+            const res = await fetch(`../public/texts/${difficulty}.txt`);
+            const data = await res.text();
+            const sentences = data.split('\n');
+            const randomIndex = Math.floor(Math.random() * sentences.length);
+            return sentences[randomIndex];
+        } catch (err) {
+            console.error('Error loading text: ', err);
+            return '';
+        }
+    };
+
     // keydown listener setup
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -56,16 +69,19 @@ function TextBlock( { currentTime, setCurrentTime, difficulty }) {
         }
     }, [textIndex, text, startTimer]);
 
-    // fetch text file
     useEffect(() => {
-        fetch(`../public/texts/${difficulty}.txt`)
-            .then((res) => res.text())
-            .then((data) => {
-                const sentences = data.split('\n');
-                const randomIndex = [Math.floor(Math.random() * sentences.length)];
-                setText(sentences[randomIndex]);
+        if (currentTime > 0 && textIndex === text.length - 1) {
+            getRandomSentence().then(sentence => {
+                setText(sentence);
+                setTextIndex(0)
+                setCorrectIndices([]);
             })
-            .catch((err) => console.error('Error loading text: ', err));
+        }
+    }, [currentTime, textIndex]);
+
+    // fetch text file according to difficulty
+    useEffect(() => {
+        getRandomSentence().then(sentence => setText(sentence));
     }, [difficulty]);
 
     return (
