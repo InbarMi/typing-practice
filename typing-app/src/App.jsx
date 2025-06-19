@@ -11,6 +11,11 @@ function App() {
     const [selectedFont, setSelectedFont] = useState('monospace');
     const [showFontMenu, setShowFontMenu] = useState(false);
     const [currentTime, setCurrentTime] = useState(initialTime);
+    const [stats, setStats] = useState({
+        totalTyped: 0,
+        totalCorrect: 0,
+        totalCharacters: 0
+    });
 
     const handleFontSelect = (font) => {
         setSelectedFont(font);
@@ -39,9 +44,14 @@ function App() {
             <div className="main-content">
                 {
                     (currentTime === 0) ? (
-                        <Stats />
+                        <Stats stats={stats} />
                     ) : (
-                        <TextBlock currentTime={currentTime} setCurrentTime={setCurrentTime} difficulty='beginner' />
+                        <TextBlock
+                            currentTime={currentTime}
+                            setCurrentTime={setCurrentTime}
+                            difficulty='beginner'
+                            setStats={setStats}
+                        />
                     )
                 }
             </div>

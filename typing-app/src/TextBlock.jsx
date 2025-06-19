@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import Timer from './Timer.jsx';
 
-function TextBlock( { currentTime, setCurrentTime, difficulty }) {
+function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
     const [text, setText] = useState('');
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
-    // const [inputKey, setInputKey] = useState('');
     const [startTimer, setStartTimer] = useState(false);
+    const [totalTyped, setTotalTyped] = useState(0);
+    const [totalCorrect, setTotalCorrect] = useState(0);
 
     const getRandomSentence = async () => {
         try {
@@ -32,15 +33,23 @@ function TextBlock( { currentTime, setCurrentTime, difficulty }) {
                 setStartTimer(true);
             }
 
-            setCorrectIndices(prevState => {
-                const updated = [...prevState];
-                if (key === text[currentIndex]) {
-                    updated[currentIndex] = true;
-                } else if (key.length === 1) {
-                    updated[currentIndex] = false;
+            if (key.length === 1) {
+                setCorrectIndices(prevState => {
+                    const updated = [...prevState];
+                    if (key === text[currentIndex]) {
+                        updated[currentIndex] = true;
+                        setTotalCorrect(prev => prev + 1);
+                    } else {
+                        updated[currentIndex] = false;
+                    }
+                    setTotalTyped(prev => prev + 1);
+                    return updated;
+                })
+                if (key !== 'Backspace') {
+                    setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
                 }
-                return updated;
-            })
+            }
+
 
             // shift cursor
             if (key === 'Backspace') {
@@ -55,11 +64,12 @@ function TextBlock( { currentTime, setCurrentTime, difficulty }) {
                     });
                     return newIndex;
                 });
-            } else if (key.length === 1) {
-                setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
             }
-
-            // setInputKey(key);
+            setStats(prev => ({
+                ...prev,
+                totalTyped: totalTyped,
+                totalCorrect: totalCorrect
+            }));
             console.log(key);
         }
         document.addEventListener('keydown', handleKeyDown);
@@ -72,6 +82,10 @@ function TextBlock( { currentTime, setCurrentTime, difficulty }) {
     useEffect(() => {
         if (currentTime > 0 && textIndex === text.length - 1) {
             getRandomSentence().then(sentence => {
+                setStats(prev => ({
+                    ...prev,
+                    totalCharacters: prev.totalCharacters + sentence.length
+                }));
                 setText(sentence);
                 setTextIndex(0)
                 setCorrectIndices([]);
