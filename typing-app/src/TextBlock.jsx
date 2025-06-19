@@ -23,6 +23,14 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
         }
     };
 
+    useEffect(() => {
+        setStats(prev => ({
+            ...prev,
+            totalTyped,
+            totalCorrect
+        }));
+    }, [totalTyped, totalCorrect]);
+
     // keydown listener setup
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -33,43 +41,34 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
                 setStartTimer(true);
             }
 
-            if (key.length === 1) {
+            if (key.length === 1 && key !== 'Backspace') {
                 setTotalTyped(prev => prev + 1);
+
+                if (key === text[currentIndex]) {
+                    setTotalCorrect(prev => prev + 1);
+                }
+
                 setCorrectIndices(prevState => {
                     const updated = [...prevState];
-                    if (key === text[currentIndex]) {
-                        updated[currentIndex] = true;
-                        setTotalCorrect(prev => prev + 1);
-                    } else {
-                        updated[currentIndex] = false;
-                    }
+                    updated[currentIndex] = key === text[currentIndex];
                     return updated;
                 })
-                if (key !== 'Backspace') {
-                    setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
-                }
+                setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
             }
 
 
             // shift cursor
             if (key === 'Backspace') {
                 // if key was wrong and typed backspace, make it not red anymore
-                setTextIndex(prevIndex => {
-                    const newIndex = Math.max(0, prevIndex - 1);
+                setTextIndex(prevIndex => Math.max(0, prevIndex - 1));
 
-                    setCorrectIndices(prevState => {
-                        const updated = [...prevState];
-                        updated[newIndex] = null;
-                        return updated;
-                    });
-                    return newIndex;
+                setCorrectIndices(prevState => {
+                    const updated = [...prevState];
+                    updated[textIndex - 1] = null;
+                    return updated;
+
                 });
             }
-            setStats(prev => ({
-                ...prev,
-                totalTyped: totalTyped,
-                totalCorrect: totalCorrect
-            }));
             console.log(key);
         }
         document.addEventListener('keydown', handleKeyDown);

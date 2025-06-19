@@ -22,6 +22,10 @@ function App() {
         setShowFontMenu(false);
     }
 
+    const handleRefresh = () => {
+        window.location.reload();
+    }
+
     return (
         <div className='app-body' style={{fontFamily: selectedFont}}>
             <div className="menu-bar">
@@ -54,6 +58,9 @@ function App() {
                         />
                     )
                 }
+                <button className="refresh" onClick={handleRefresh}>
+                    ↻
+                </button>
             </div>
         </div>
     )
