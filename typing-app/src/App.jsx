@@ -6,15 +6,19 @@ import Stats from './Stats.jsx';
 function App() {
 
     const fontOptions = ['monospace', 'serif', 'sans-serif'];
-    const initialTime = 30;
+    const timeOptions = [30, 60, 90] // seconds
 
     const [selectedFont, setSelectedFont] = useState('monospace');
     const [showFontMenu, setShowFontMenu] = useState(false);
-    const [currentTime, setCurrentTime] = useState(initialTime);
+    const [selectedTime, setSelectedTime] = useState(30);
+    const [currentTime, setCurrentTime] = useState(selectedTime);
+    const [showTimeMenu, setShowTimeMenu] = useState(false);
+
+
     const [stats, setStats] = useState({
         totalTyped: 0,
         totalCorrect: 0,
-        time: initialTime
+        time: selectedTime
     });
 
     const handleFontSelect = (font) => {
@@ -22,9 +26,22 @@ function App() {
         setShowFontMenu(false);
     }
 
+    const handleTimeSelect = (time) => {
+        setSelectedTime(time);
+        setShowTimeMenu(false);
+    }
+
     const handleRefresh = () => {
         window.location.reload();
     }
+
+    useEffect(() => {
+        setCurrentTime(selectedTime);
+        setStats(prev => ({
+            ...prev,
+            time: selectedTime
+        }));
+    }, [selectedTime]);
 
     return (
         <div className='app-body' style={{fontFamily: selectedFont}}>
@@ -38,6 +55,18 @@ function App() {
                             {fontOptions.map(font => (
                                 <li key={font} onClick={() => handleFontSelect(font)}>
                                     {font}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    <button onClick={() => setShowTimeMenu(prev => !prev)}>
+                        {selectedTime} seconds
+                    </button>
+                    { showTimeMenu && (
+                        <ul className="dropdown-menu">
+                            {timeOptions.map(time => (
+                                <li key={time} onClick={() => handleTimeSelect(time)}>
+                                    {time} seconds
                                 </li>
                             ))}
                         </ul>

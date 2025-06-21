@@ -104,6 +104,16 @@
   font-size: 1.8rem;
 }
 
+.refresh {
+  margin: 2.5rem;
+  border: transparent;
+  color: #2c233d;
+  background-color: transparent;
+  padding: 0.6em 1.2em;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
 
 
 
