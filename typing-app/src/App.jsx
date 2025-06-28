@@ -7,13 +7,17 @@ function App() {
 
     const fontOptions = ['monospace', 'serif', 'sans-serif'];
     const timeOptions = [30, 60, 90] // seconds
+    const difficultyOptions = ['easy', 'normal', 'hard'];
 
     const [selectedFont, setSelectedFont] = useState('monospace');
     const [showFontMenu, setShowFontMenu] = useState(false);
+
     const [selectedTime, setSelectedTime] = useState(30);
     const [currentTime, setCurrentTime] = useState(selectedTime);
     const [showTimeMenu, setShowTimeMenu] = useState(false);
 
+    const [selectedDifficulty, setSelectedDifficulty] = useState('normal');
+    const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
 
     const [stats, setStats] = useState({
         totalTyped: 0,
@@ -29,6 +33,11 @@ function App() {
     const handleTimeSelect = (time) => {
         setSelectedTime(time);
         setShowTimeMenu(false);
+    }
+
+    const handleDifficultySelect = (difficulty) => {
+        setSelectedDifficulty(difficulty);
+        setShowDifficultyMenu(false);
     }
 
     const handleRefresh = () => {
@@ -71,6 +80,18 @@ function App() {
                             ))}
                         </ul>
                     )}
+                    <button onClick={() => setShowDifficultyMenu(prev => !prev)}>
+                        Difficulty: {selectedDifficulty}
+                    </button>
+                    { showDifficultyMenu && (
+                        <ul className="dropdown-menu">
+                            {difficultyOptions.map(level => (
+                                <li key={level} onClick={() => handleDifficultySelect(level)}>
+                                    {level}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
             <h1 className="title">Type What You See :)</h1>
@@ -82,7 +103,7 @@ function App() {
                         <TextBlock
                             currentTime={currentTime}
                             setCurrentTime={setCurrentTime}
-                            difficulty='beginner'
+                            difficulty={selectedDifficulty}
                             setStats={setStats}
                         />
                     )
