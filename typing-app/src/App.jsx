@@ -55,12 +55,12 @@ function App() {
     return (
         <div className='app-body' style={{fontFamily: selectedFont}}>
             <div className="menu-bar">
-                <div className="dropdown">
+                <div className="dropdown-wrapper">
                     <button onClick={() => setShowFontMenu(prev => !prev)}>
                         Pick a font
                     </button>
                     { showFontMenu && (
-                        <ul className="dropdown-menu">
+                        <ul className="dropdown-menu" id="fontsMenu" >
                             {fontOptions.map(font => (
                                 <li key={font} onClick={() => handleFontSelect(font)}>
                                     {font}
@@ -68,11 +68,13 @@ function App() {
                             ))}
                         </ul>
                     )}
+                </div>
+                <div className="dropdown-wrapper">
                     <button onClick={() => setShowTimeMenu(prev => !prev)}>
                         {selectedTime} seconds
                     </button>
                     { showTimeMenu && (
-                        <ul className="dropdown-menu">
+                        <ul className="dropdown-menu" id="timeMenu">
                             {timeOptions.map(time => (
                                 <li key={time} onClick={() => handleTimeSelect(time)}>
                                     {time} seconds
@@ -80,11 +82,13 @@ function App() {
                             ))}
                         </ul>
                     )}
+                </div>
+                <div className="dropdown-wrapper">
                     <button onClick={() => setShowDifficultyMenu(prev => !prev)}>
                         Difficulty: {selectedDifficulty}
                     </button>
                     { showDifficultyMenu && (
-                        <ul className="dropdown-menu">
+                        <ul className="dropdown-menu" id="levelsMenu">
                             {difficultyOptions.map(level => (
                                 <li key={level} onClick={() => handleDifficultySelect(level)}>
                                     {level}

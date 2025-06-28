@@ -9,8 +9,6 @@ function Stats({ stats }) {
 
     return (
         <div className='stats'>
-            <p>Total Correct: {totalCorrect}</p>
-            <p>Total Typed: {totalTyped}</p>
             <p>WPM: {wpm} </p>
             <p>Accuracy: {accuracy}% </p>
         </div>
