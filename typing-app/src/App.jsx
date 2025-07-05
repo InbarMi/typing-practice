@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import './App.css';
 import TextBlock from './TextBlock.jsx';
 import Stats from './Stats.jsx';
@@ -21,14 +21,47 @@ function App() {
         time: selectedTime
     });
 
+    const fontDropdownRef = useRef(null);
+    const timeDropdownRef = useRef(null);
+
+    const closeAllMenus = useCallback(() => {
+        setShowFontMenu(false);
+        setShowTimeMenu(false);
+    }, []);
+
+    const toggleMenu = (menuSetter, currentMenuState) => {
+        closeAllMenus();
+        if (!currentMenuState) {
+            menuSetter(true);
+        }
+    }
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                fontDropdownRef.current && !fontDropdownRef.current.contains(event.target) &&
+                timeDropdownRef.current && !timeDropdownRef.current.contains(event.target)
+            ) {
+                closeAllMenus();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [closeAllMenus]);
+
     const handleFontSelect = (font) => {
         setSelectedFont(font);
-        setShowFontMenu(false);
+        closeAllMenus();
     }
 
     const handleTimeSelect = (time) => {
         setSelectedTime(time);
-        setShowTimeMenu(false);
+        closeAllMenus()
+        setCurrentTime(time);
     }
 
     const handleRefresh = () => {
@@ -46,12 +79,12 @@ function App() {
     return (
         <div className='app-body' style={{fontFamily: selectedFont}}>
             <div className="menu-bar">
-                <div className="dropdown-wrapper">
-                    <button onClick={() => setShowFontMenu(prev => !prev)}>
+                <div className="dropdown-wrapper" ref={fontDropdownRef}>
+                    <button onClick={() => toggleMenu(setShowFontMenu, showFontMenu)}>
                         Pick a font
                     </button>
                     { showFontMenu && (
-                        <ul className="dropdown-menu" id="fontsMenu" >
+                        <ul className={`dropdown-menu ${showFontMenu ? 'open' : ''}`} id="fontsMenu" >
                             {fontOptions.map(font => (
                                 <li key={font} onClick={() => handleFontSelect(font)}>
                                     {font}
@@ -60,12 +93,12 @@ function App() {
                         </ul>
                     )}
                 </div>
-                <div className="dropdown-wrapper">
-                    <button onClick={() => setShowTimeMenu(prev => !prev)}>
+                <div className="dropdown-wrapper" ref={timeDropdownRef}>
+                    <button onClick={() => toggleMenu(setShowTimeMenu, showTimeMenu)}>
                         {selectedTime} seconds
                     </button>
                     { showTimeMenu && (
-                        <ul className="dropdown-menu" id="timeMenu">
+                        <ul className={`dropdown-menu ${showTimeMenu ? 'open' : ''}`} id="timeMenu">
                             {timeOptions.map(time => (
                                 <li key={time} onClick={() => handleTimeSelect(time)}>
                                     {time} seconds
