@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import './App.css';
 import Timer from './Timer.jsx';
+import Keymap from './Keymap.jsx';
 
-function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
+function TextBlock( { currentTime, setCurrentTime, setStats }) {
     const [text, setText] = useState('');
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
@@ -10,18 +11,39 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
     const [totalTyped, setTotalTyped] = useState(0);
     const [totalCorrect, setTotalCorrect] = useState(0);
 
-    const getRandomSentence = async () => {
+    const getRandomSentence = useCallback(async () => {
         try {
-            const res = await fetch(`../public/texts/${difficulty}.txt`);
-            const data = await res.text();
-            const sentences = data.split('\n');
-            const randomIndex = Math.floor(Math.random() * sentences.length);
-            return sentences[randomIndex];
+            let res = await fetch(`http://localhost:3000/api/sentence`);
+            if (res.ok) {
+                const data = await res.json();
+                return data.word;
+            } else {
+                console.error('Error fetching text from api');
+                return '';
+            }
         } catch (err) {
-            console.error('Error loading text: ', err);
+            console.error('Error loading text');
             return '';
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        getRandomSentence().then(sentence => {
+            setText(sentence);
+            setTextIndex(0);
+            setCorrectIndices([]);
+        })
+    }, [getRandomSentence]);
+
+    useEffect(() => {
+        if (currentTime > 0 && textIndex === text.length - 1) {
+            getRandomSentence().then(sentence => {
+                setText(sentence);
+                setTextIndex(0)
+                setCorrectIndices([]);
+            })
+        }
+    }, [currentTime, textIndex, getRandomSentence, text.length]);
 
     useEffect(() => {
         setStats(prev => ({
@@ -78,21 +100,6 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
         }
     }, [textIndex, text, startTimer]);
 
-    useEffect(() => {
-        if (currentTime > 0 && textIndex === text.length - 1) {
-            getRandomSentence().then(sentence => {
-                setText(sentence);
-                setTextIndex(0)
-                setCorrectIndices([]);
-            })
-        }
-    }, [currentTime, textIndex]);
-
-    // fetch text file according to difficulty
-    useEffect(() => {
-        getRandomSentence().then(sentence => setText(sentence));
-    }, [difficulty]);
-
     return (
         <div className="text">
             <Timer startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
@@ -111,6 +118,7 @@ function TextBlock( { currentTime, setCurrentTime, difficulty, setStats }) {
                     </span>
                 );
             })}
+            {/*<Keymap nextExpectedKey={text.charAt(textIndex)} />*/}
         </div>
     )
 }
