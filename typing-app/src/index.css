@@ -1,11 +1,21 @@
 :root {
+  --text-color: #E2E8F0;
+  --background-color: #1A202C;
+  --button-text-color: #FFF4E4;
+  --box-background: #2D3748;
+  --accent-1: #8A96A8;
+  --accent-2: #B08E6F;
+  --accent-3: #DDA15E;
+  --correct-color: #98D8AA;
+  --incorrect-color: #F29D9D;
+
   font-family: monospace;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #130F1A;
-  background-color: #B3BAFF;
+  color: var(--text-color);
+  background-color: var(--background-color);
 
 
   font-synthesis: none;
