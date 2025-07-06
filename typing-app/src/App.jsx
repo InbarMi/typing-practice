@@ -1,19 +1,14 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import './App.css';
-import TextBlock from './TextBlock.jsx';
-import Stats from './Stats.jsx';
-
+import TextBlock from './components/TextBlock/TextBlock.jsx';
+import Stats from './components/Stats/Stats.jsx';
+import SettingsPanel from './components/SettingsPanel/SettingsPanel.jsx';
 
 function App() {
-    const fontOptions = ['monospace', 'serif', 'sans-serif'];
-    const timeOptions = [30, 60, 90] // seconds
-
-    const [selectedFont, setSelectedFont] = useState('monospace');
-    const [showFontMenu, setShowFontMenu] = useState(false);
-
-    const [selectedTime, setSelectedTime] = useState(30);
-    const [currentTime, setCurrentTime] = useState(selectedTime);
-    const [showTimeMenu, setShowTimeMenu] = useState(false);
+    const [selectedFont, setSelectedFont] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(null);
+    const [currentTime, setCurrentTime] = useState(null);
+    const [selectedLevel, setSelectedLevel] = useState(null);
 
     const [stats, setStats] = useState({
         totalTyped: 0,
@@ -21,52 +16,58 @@ function App() {
         time: selectedTime
     });
 
-    const fontDropdownRef = useRef(null);
-    const timeDropdownRef = useRef(null);
+    const [gameStarted, setGameStarted] = useState(false);
 
-    const closeAllMenus = useCallback(() => {
-        setShowFontMenu(false);
-        setShowTimeMenu(false);
-    }, []);
+    const startGame = useCallback(() => {
+        setCurrentTime(selectedTime);
+        setStats({
+            totalTyped: 0,
+            totalCorrect: 0,
+            time: selectedTime
+        });
+        setGameStarted(true);
+    }, [selectedTime, setCurrentTime, setStats])
 
-    const toggleMenu = (menuSetter, currentMenuState) => {
-        closeAllMenus();
-        if (!currentMenuState) {
-            menuSetter(true);
-        }
-    }
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                fontDropdownRef.current && !fontDropdownRef.current.contains(event.target) &&
-                timeDropdownRef.current && !timeDropdownRef.current.contains(event.target)
-            ) {
-                closeAllMenus();
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [closeAllMenus]);
 
     const handleFontSelect = (font) => {
         setSelectedFont(font);
-        closeAllMenus();
     }
 
     const handleTimeSelect = (time) => {
         setSelectedTime(time);
-        closeAllMenus()
-        setCurrentTime(time);
     }
 
-    const handleRefresh = () => {
-        window.location.reload();
+    const handleLevelSelect = (level) => {
+        setSelectedLevel(level);
     }
+
+    const handleRefresh = useCallback(() => {
+        setGameStarted(false);
+        setCurrentTime(selectedTime);
+        setStats({
+            totalTyped: 0,
+            totalCorrect: 0,
+            time: selectedTime
+        });
+        setSelectedFont(null);
+        setSelectedTime(null);
+        setSelectedLevel(null);
+    }, [selectedTime]);
+
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (gameStarted && currentTime === 0 && event.key === 'Enter') {
+                handleRefresh();
+                event.preventDefault();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [gameStarted, currentTime, handleRefresh]);
 
     useEffect(() => {
         setCurrentTime(selectedTime);
@@ -76,55 +77,55 @@ function App() {
         }));
     }, [selectedTime]);
 
+    const fontProps = {
+        selected: selectedFont,
+        onSelect: handleFontSelect
+    }
+
+    const timeProps = {
+        selected: selectedTime,
+        onSelect: handleTimeSelect
+    }
+
+    const levelProps = {
+        selected: selectedLevel,
+        onSelect: handleLevelSelect
+    }
+
     return (
         <div className='app-body' style={{fontFamily: selectedFont}}>
-            <div className="menu-bar">
-                <div className="dropdown-wrapper" ref={fontDropdownRef}>
-                    <button onClick={() => toggleMenu(setShowFontMenu, showFontMenu)}>
-                        Pick a font
-                    </button>
-                    { showFontMenu && (
-                        <ul className={`dropdown-menu ${showFontMenu ? 'open' : ''}`} id="fontsMenu" >
-                            {fontOptions.map(font => (
-                                <li key={font} onClick={() => handleFontSelect(font)}>
-                                    {font}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+            {!gameStarted ? (
+                <div className="settings-section">
+                    <h1 className="title">Pick your preferences:</h1>
+                    <SettingsPanel
+                        fontProps={fontProps}
+                        timeProps={timeProps}
+                        levelProps={levelProps}
+                        startGame={startGame}
+                    />
                 </div>
-                <div className="dropdown-wrapper" ref={timeDropdownRef}>
-                    <button onClick={() => toggleMenu(setShowTimeMenu, showTimeMenu)}>
-                        {selectedTime} seconds
-                    </button>
-                    { showTimeMenu && (
-                        <ul className={`dropdown-menu ${showTimeMenu ? 'open' : ''}`} id="timeMenu">
-                            {timeOptions.map(time => (
-                                <li key={time} onClick={() => handleTimeSelect(time)}>
-                                    {time} seconds
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+            ) : (
+                <div className="game-section">
+                    <h1 className="title">Type What You See :)</h1>
+                    <div className="main-content">
+                        {
+                            (currentTime === 0) ? (
+                                <Stats stats={stats} />
+                            ) : (
+                                <TextBlock
+                                    currentTime={currentTime}
+                                    setCurrentTime={setCurrentTime}
+                                    setStats={setStats}
+                                    difficulty={selectedLevel}
+                                />
+                            )
+                        }
+                        <button className="refresh" onClick={handleRefresh}>
+                            ↻
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <h1 className="title">Type What You See :)</h1>
-            <div className="main-content">
-                {
-                    (currentTime === 0) ? (
-                        <Stats stats={stats} />
-                    ) : (
-                        <TextBlock
-                            currentTime={currentTime}
-                            setCurrentTime={setCurrentTime}
-                            setStats={setStats}
-                        />
-                    )
-                }
-                <button className="refresh" onClick={handleRefresh}>
-                    ↻
-                </button>
-            </div>
+            )}
         </div>
     )
 }

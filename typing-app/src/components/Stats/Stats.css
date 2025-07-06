@@ -1,0 +1,7 @@
+.stats {
+  background-color: var(--box-background);
+  border-radius: 8px;
+  color: var(--text-color);
+  padding: 0.6em 1.2em;
+  font-size: 1.8rem;
+}

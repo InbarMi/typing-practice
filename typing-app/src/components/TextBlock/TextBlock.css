@@ -1,0 +1,41 @@
+.text-block-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.text-content-wrapper {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    font-weight: bold;
+    position: relative;
+    padding-top: 1rem;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    width: 100%;
+}
+
+.correct {
+    color: var(--correct-color);
+}
+
+.incorrect {
+    color: var(--incorrect-color);
+}
+
+.cursor {
+    display: inline-block;
+    width: 4px;
+    height: 1.3em;
+    background-color: var(--accent-3);
+    animation: blink 0.8s step-end infinite;
+    margin-right: 1px;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    50% {
+        background-color: transparent;
+    }
+}

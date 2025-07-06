@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import './App.css';
-import Timer from './Timer.jsx';
-import Keymap from './Keymap.jsx';
+import './TextBlock.css';
+import Timer from '../Timer/Timer.jsx';
 import {generate} from 'random-words';
 
 function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
@@ -110,23 +109,26 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
     }, [textIndex, text, startTimer]);
 
     return (
-        <div className="text">
+        <div className="text-block-container">
             <Timer startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
-            {text.split('').map((char, index) => {
-                const cursorPosition = index === textIndex;
-                const isCorrect = correctIndices[index];
+            <div className="text-content-wrapper">
+                {text.split('').map((char, index) => {
+                    const cursorPosition = index === textIndex;
+                    const isCorrect = correctIndices[index];
 
-                let className = '';
-                if (isCorrect === true) className = 'correct';
-                else if (isCorrect === false) className = 'incorrect';
+                    let className = '';
+                    if (isCorrect === true) className = 'correct';
+                    else if (isCorrect === false) className = 'incorrect';
 
-                return (
-                    <span key={index}>
+                    return (
+                        <span key={index}>
                         {cursorPosition && <span className="cursor"/>}
-                        <span className={className}>{char}</span>
+                            <span className={className}>{char}</span>
                     </span>
-                );
-            })}
+                    );
+                })}
+            </div>
+
             {/*<Keymap nextExpectedKey={text.charAt(textIndex)} />*/}
         </div>
     )
