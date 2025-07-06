@@ -4,7 +4,7 @@ import Dropdown from "../Dropdown/Dropdown.jsx";
 
 function SettingsPanel({ fontProps, timeProps, levelProps, startGame}) {
 
-    const fontOptions = ['monospace', 'serif', 'sans-serif'];
+    const fontOptions = ['Courier', 'monospace', 'Garmond', 'Helvetica', 'Papyrus'];
     const timeOptions = [30, 60, 90] // seconds
     const levelOptions = ['easy', 'normal', 'hard'];
 
