@@ -1,15 +1,17 @@
 .settings-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 4em;
 }
 
 .settings-container .options-menu {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
 .settings-container .start-game-btn {
@@ -20,6 +22,8 @@
     font-size: 1.5em;
     font-weight: 500;
     font-family: inherit;
+    align-self: center;
+    width: 300px;
 }
 
 .settings-container .start-game-btn:hover {
