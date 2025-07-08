@@ -19,6 +19,22 @@
     width: 100%;
 }
 
+.word-unit {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: baseline;
+}
+
+.word-unit span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.space-separator {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .correct {
     color: var(--correct-color);
 }
