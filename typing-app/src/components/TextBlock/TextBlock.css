@@ -2,6 +2,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 50vw;
 }
 
 .text-content-wrapper {
@@ -14,6 +17,22 @@
     overflow-wrap: break-word;
     word-break: normal;
     width: 100%;
+}
+
+.word-unit {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: baseline;
+}
+
+.word-unit span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.space-separator {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .correct {
@@ -35,7 +54,10 @@
 }
 
 @keyframes blink {
+    from, to {
+        opacity: 1;
+    }
     50% {
-        background-color: transparent;
+        opacity: 0;
     }
 }

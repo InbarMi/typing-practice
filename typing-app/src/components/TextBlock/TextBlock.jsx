@@ -5,7 +5,7 @@ import {generate} from 'random-words';
 import Keymap from "../Keymap/Keymap.jsx";
 
 function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
-    const [text, setText] = useState('');
+    const [wordList, setWordList] = useState([]);
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
     const [startTimer, setStartTimer] = useState(false);
@@ -13,6 +13,28 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
     const [totalCorrect, setTotalCorrect] = useState(0);
     const [lastKey, setLastKey] = useState(null);
     const [isLastCorrect, setIsLastCorrect] = useState(null);
+
+    const totalTextLength = wordList.reduce((sum, word) => sum + word.length, 0) + (wordList.length > 0 ? wordList.length - 1 : 0);
+
+    const getCurrentChar = useCallback((globalIndex) => {
+        let cumulativeLength = 0;
+        for (let i = 0; i < wordList.length; i++) {
+            const word = wordList[i];
+
+            if (globalIndex >= cumulativeLength && globalIndex < cumulativeLength + word.length) {
+                return word[globalIndex - cumulativeLength];
+            }
+            cumulativeLength += word.length;
+
+            if (i < wordList.length - 1) {
+                if (globalIndex === cumulativeLength) {
+                    return ' ';
+                }
+                cumulativeLength += 1;
+            }
+        }
+        return '';
+    }, [wordList]);
 
     const getRandomSentence = useCallback((difficulty) => {
 
@@ -41,21 +63,19 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
 
     useEffect(() => {
         const words = getRandomSentence(difficulty);
-        const sentence = words.join(' ')
-        setText(sentence);
+        setWordList(words);
         setTextIndex(0);
         setCorrectIndices([]);
     }, [getRandomSentence, difficulty]);
 
     useEffect(() => {
-        if (currentTime > 0 && textIndex === text.length) {
+        if (currentTime > 0 && textIndex === totalTextLength) {
             const words = getRandomSentence(difficulty);
-            const sentence = words.join(' ');
-            setText(sentence);
+            setWordList(words);
             setTextIndex(0);
             setCorrectIndices([]);
         }
-    }, [currentTime, textIndex, getRandomSentence, text.length, difficulty]);
+    }, [currentTime, textIndex, getRandomSentence, totalTextLength, difficulty]);
 
     useEffect(() => {
         setStats(prev => ({
@@ -81,7 +101,8 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
             if (key.length === 1 && key !== 'Backspace') {
                 setTotalTyped(prev => prev + 1);
 
-                const isCorrect = key === text[currentIndex];
+                const expectedChar = getCurrentChar(currentIndex);
+                const isCorrect = key === expectedChar;
 
                 if (isCorrect) {
                     setTotalCorrect(prev => prev + 1);
@@ -92,7 +113,7 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
                     updated[currentIndex] = isCorrect;
                     return updated;
                 })
-                setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
+                setTextIndex(prevIndex => Math.min(totalTextLength, prevIndex + 1));
                 setLastKey(key);
                 setIsLastCorrect(isCorrect);
             }
@@ -118,29 +139,57 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         }
-    }, [textIndex, text, startTimer]);
+    }, [textIndex, startTimer, totalTextLength, getCurrentChar()]);
+
+    let currentGlobalIndex = 0;
 
     return (
         <div className="text-block-container">
             <Timer startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
             <div className="text-content-wrapper">
-                {text.split('').map((char, index) => {
-                    const cursorPosition = index === textIndex;
-                    const isCorrect = correctIndices[index];
+                { wordList.map((word, wordIndex) => {
+                    const wordSpans = word.split('').map((char, charInWordIndex) => {
+                        const globalCharIndex = currentGlobalIndex + charInWordIndex;
+                        const isCursorPosition = globalCharIndex === textIndex;
+                        const isCorrect = correctIndices[globalCharIndex];
 
-                    let className = '';
-                    if (isCorrect === true) className = 'correct';
-                    else if (isCorrect === false) className = 'incorrect';
+                        let className = '';
+                        if (isCorrect === true) className = 'correct';
+                        else if (isCorrect === false) className = 'incorrect';
+
+                        return (
+                            <span key={globalCharIndex} className={className}>
+                                {isCursorPosition && <span className="cursor"/> }
+                                {char}
+                            </span>
+                        );
+                    });
+
+                    currentGlobalIndex += word.length;
+
+                    let spaceSeparator = null;
+                    if (wordIndex < wordList.length - 1) {
+                        spaceSeparator = (
+                            <span key={`space-${currentGlobalIndex}`} className='space-separator'>
+                                {currentGlobalIndex === textIndex && <span className="cursor"/>}
+                                {'\u00A0'}
+                            </span>
+                        );
+                        currentGlobalIndex++;
+                    }
 
                     return (
-                        <span key={index}>
-                        {cursorPosition && <span className="cursor"/>}
-                            <span className={className}>{char}</span>
-                    </span>
-                    );
+                        <React.Fragment key={`word-block-${wordIndex}`}>
+                            <span key={`word-unit-${wordIndex}`} className="word-unit">
+                                {wordSpans}
+                            </span>
+                            {spaceSeparator}
+                        </React.Fragment>
+                    )
                 })}
             </div>
-            <Keymap nextExpectedKey={text.charAt(textIndex)} lastKey={lastKey} isLastCorrect={isLastCorrect} />
+
+            <Keymap nextExpectedKey={getCurrentChar(textIndex)} lastKey={lastKey} isLastCorrect={isLastCorrect} />
         </div>
     )
 }
