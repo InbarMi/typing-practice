@@ -1,0 +1,52 @@
+.keymap-container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.keymap-container .simple-keyboard {
+    border-radius: 20px;
+    background-color: transparent;
+}
+
+.keymap-container .simple-keyboard,
+.keymap-container .hg-button {
+    pointer-events: none;
+    color: var(--accent-1);
+}
+
+.hg-theme-default .hg-button {
+    transition: background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hg-theme-default .next-key-highlight,
+.hg-theme-default .hg-button.next-key-highlight {
+    background: #8A96A8 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.hg-theme-default .hg-button.correct-key {
+    background: #28a745 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.hg-theme-default .hg-button.incorrect-key {
+    background: #dc3545 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.toggleKeymap {
+    background-color: transparent;
+    border: 2px solid transparent;
+    font-size: 25px;
+}
+
+.toggleKeymap:hover {
+    cursor: pointer;
+    color: var(--accent-1);
+}

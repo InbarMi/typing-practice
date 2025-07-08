@@ -94,41 +94,36 @@ function App() {
 
     return (
         <div style={{fontFamily: selectedFont}}>
-            <h1 className='title'>{!gameStarted ? 'Pick your Preferences:' : 'Type What You See :)'}</h1>
-            <div className='app-body'>
+            <div className='app-body' style={{fontFamily: selectedFont}}>
+                <h1 className='title'>{!gameStarted ? 'Pick your Preferences:' : 'Type What You See :)'}</h1>
                 {!gameStarted ? (
-                    <div className="settings-section">
-                        <SettingsPanel
-                            fontProps={fontProps}
-                            timeProps={timeProps}
-                            levelProps={levelProps}
-                            startGame={startGame}
-                        />
-                    </div>
+                    <SettingsPanel
+                        fontProps={fontProps}
+                        timeProps={timeProps}
+                        levelProps={levelProps}
+                        startGame={startGame}
+                    />
                 ) : (
-                    <div className="game-section">
-                        <div className="main-content">
-                            {
-                                (currentTime === 0) ? (
-                                    <Stats stats={stats} />
-                                ) : (
-                                    <TextBlock
-                                        currentTime={currentTime}
-                                        setCurrentTime={setCurrentTime}
-                                        setStats={setStats}
-                                        difficulty={selectedLevel}
-                                    />
-                                )
-                            }
-                            <button className="refresh" onClick={handleRefresh}>
-                                ↻
-                            </button>
-                        </div>
-                    </div>
+                    <>
+                        {
+                            (currentTime === 0) ? (
+                                <Stats stats={stats} />
+                            ) : (
+                                <TextBlock
+                                    currentTime={currentTime}
+                                    setCurrentTime={setCurrentTime}
+                                    setStats={setStats}
+                                    difficulty={selectedLevel}
+                                />
+                            )
+                        }
+                        <button className="refresh" onClick={handleRefresh}>
+                            ↻
+                        </button>
+                    </>
                 )}
             </div>
         </div>
-
     )
 }
 

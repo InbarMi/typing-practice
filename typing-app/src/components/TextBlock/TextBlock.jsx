@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import './TextBlock.css';
 import Timer from '../Timer/Timer.jsx';
 import {generate} from 'random-words';
+import Keymap from "../Keymap/Keymap.jsx";
 
 function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
     const [text, setText] = useState('');
@@ -10,6 +11,8 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
     const [startTimer, setStartTimer] = useState(false);
     const [totalTyped, setTotalTyped] = useState(0);
     const [totalCorrect, setTotalCorrect] = useState(0);
+    const [lastKey, setLastKey] = useState(null);
+    const [isLastCorrect, setIsLastCorrect] = useState(null);
 
     const getRandomSentence = useCallback((difficulty) => {
 
@@ -68,6 +71,9 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
             const key = event.key;
             const currentIndex = textIndex;
 
+            setLastKey(null);
+            setIsLastCorrect(null)
+
             if (!startTimer) {
                 setStartTimer(true);
             }
@@ -75,16 +81,20 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
             if (key.length === 1 && key !== 'Backspace') {
                 setTotalTyped(prev => prev + 1);
 
-                if (key === text[currentIndex]) {
+                const isCorrect = key === text[currentIndex];
+
+                if (isCorrect) {
                     setTotalCorrect(prev => prev + 1);
                 }
 
                 setCorrectIndices(prevState => {
                     const updated = [...prevState];
-                    updated[currentIndex] = key === text[currentIndex];
+                    updated[currentIndex] = isCorrect;
                     return updated;
                 })
                 setTextIndex(prevIndex => Math.min(text.length, prevIndex + 1));
+                setLastKey(key);
+                setIsLastCorrect(isCorrect);
             }
 
 
@@ -99,6 +109,8 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
                     return updated;
 
                 });
+                setLastKey(null);
+                setIsLastCorrect(null);
             }
         }
         document.addEventListener('keydown', handleKeyDown);
@@ -128,8 +140,7 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
                     );
                 })}
             </div>
-
-            {/*<Keymap nextExpectedKey={text.charAt(textIndex)} />*/}
+            <Keymap nextExpectedKey={text.charAt(textIndex)} lastKey={lastKey} isLastCorrect={isLastCorrect} />
         </div>
     )
 }
