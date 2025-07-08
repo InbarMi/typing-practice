@@ -35,7 +35,7 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
         }
         prevNextKeyRef.current = currentNextKey;
 
-    }, [nextExpectedKey]);
+    }, [nextExpectedKey, toggleMap]);
 
     useEffect(() => {
         if (!keyboardRef.current) return;
@@ -71,7 +71,7 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
                 keyboard.removeButtonTheme(currentTypedKey, 'incorrect-key');
             }, 250);
         }
-    }, [lastKey, isLastCorrect]);
+    }, [lastKey, isLastCorrect, toggleMap]);
 
     return (
 
@@ -79,14 +79,9 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
             <button className="toggleKeymap" onClick={handleToggleMap}>
                 <FontAwesomeIcon icon={faKeyboard} />
             </button>
-
-            {
-                toggleMap && (
-                    <Keyboard
-                        keyboardRef={(r) => (keyboardRef.current = r)}
-                    />
-                )
-            }
+            <div className={!toggleMap ? 'hidden-keyboard' : ''}>
+                <Keyboard keyboardRef={(r) => (keyboardRef.current = r)} />
+            </div>
         </div>
     )
 }

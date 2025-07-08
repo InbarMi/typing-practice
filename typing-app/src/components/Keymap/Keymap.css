@@ -51,3 +51,7 @@
     cursor: pointer;
     color: var(--accent-1);
 }
+
+.hidden-keyboard {
+    display: none;
+}

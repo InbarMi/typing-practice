@@ -2,6 +2,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 50vw;
 }
 
 .text-content-wrapper {
@@ -35,7 +38,10 @@
 }
 
 @keyframes blink {
+    from, to {
+        opacity: 1;
+    }
     50% {
-        background-color: transparent;
+        opacity: 0;
     }
 }
