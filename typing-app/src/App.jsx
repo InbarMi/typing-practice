@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import './App.css';
 import TextBlock from './components/TextBlock/TextBlock.jsx';
 import Stats from './components/Stats/Stats.jsx';
@@ -93,36 +93,34 @@ function App() {
     }
 
     return (
-        <div style={{fontFamily: selectedFont}}>
-            <div className='app-body' style={{fontFamily: selectedFont}}>
-                <h1 className='title'>{!gameStarted ? 'Pick your Preferences:' : 'Type What You See :)'}</h1>
-                {!gameStarted ? (
-                    <SettingsPanel
-                        fontProps={fontProps}
-                        timeProps={timeProps}
-                        levelProps={levelProps}
-                        startGame={startGame}
-                    />
-                ) : (
-                    <>
-                        {
-                            (currentTime === 0) ? (
-                                <Stats stats={stats} />
-                            ) : (
-                                <TextBlock
-                                    currentTime={currentTime}
-                                    setCurrentTime={setCurrentTime}
-                                    setStats={setStats}
-                                    difficulty={selectedLevel}
-                                />
-                            )
-                        }
-                        <button className="refresh" onClick={handleRefresh}>
-                            ↻
-                        </button>
-                    </>
-                )}
-            </div>
+        <div className='app-body' style={{fontFamily: selectedFont}}>
+            <h1 className='title'>{!gameStarted ? 'Pick your Preferences:' : 'Type What You See :)'}</h1>
+            {!gameStarted ? (
+                <SettingsPanel
+                    fontProps={fontProps}
+                    timeProps={timeProps}
+                    levelProps={levelProps}
+                    startGame={startGame}
+                />
+            ) : (
+                <>
+                    {
+                        (currentTime === 0) ? (
+                            <Stats stats={stats} />
+                        ) : (
+                            <TextBlock
+                                currentTime={currentTime}
+                                setCurrentTime={setCurrentTime}
+                                setStats={setStats}
+                                difficulty={selectedLevel}
+                            />
+                        )
+                    }
+                    <button className="refresh" onClick={handleRefresh}>
+                        ↻
+                    </button>
+                </>
+            )}
         </div>
     )
 }

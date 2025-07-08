@@ -9,11 +9,12 @@
 .keymap-container .simple-keyboard {
     border-radius: 20px;
     background-color: transparent;
+    pointer-events: none;
+    width: 50vw;
 }
 
 .keymap-container .simple-keyboard,
 .keymap-container .hg-button {
-    pointer-events: none;
     color: var(--accent-1);
 }
 
