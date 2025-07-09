@@ -1,10 +1,11 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './TextBlock.css';
 import Timer from '../Timer/Timer.jsx';
 import {generate} from 'random-words';
 import Keymap from "../Keymap/Keymap.jsx";
+const keyPressSoundPath = '../../public/audio/mech-key.mp3';
 
-function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
+function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSound }) {
     const [wordList, setWordList] = useState([]);
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
@@ -13,6 +14,9 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
     const [totalCorrect, setTotalCorrect] = useState(0);
     const [lastKey, setLastKey] = useState(null);
     const [isLastCorrect, setIsLastCorrect] = useState(null);
+
+    const audioRef = useRef(new Audio(keyPressSoundPath));
+    audioRef.constructor.volume = 0.5;
 
     const totalTextLength = wordList.reduce((sum, word) => sum + word.length, 0) + (wordList.length > 0 ? wordList.length - 1 : 0);
 
@@ -98,6 +102,11 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
                 setStartTimer(true);
             }
 
+            if (playSound) {
+                audioRef.current.currentTime = 0;
+                audioRef.current.play().catch(e => console.error("Error playing sound: ", e));
+            }
+
             if (key.length === 1 && key !== 'Backspace') {
                 setTotalTyped(prev => prev + 1);
 
@@ -117,7 +126,6 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
                 setLastKey(key);
                 setIsLastCorrect(isCorrect);
             }
-
 
             // shift cursor
             if (key === 'Backspace') {
@@ -139,7 +147,7 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty }) {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         }
-    }, [textIndex, startTimer, totalTextLength, getCurrentChar()]);
+    }, [textIndex, startTimer, totalTextLength, getCurrentChar, playSound]);
 
     let currentGlobalIndex = 0;
 

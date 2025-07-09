@@ -9,7 +9,6 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
     const [toggleMap, setToggleMap] = useState(true);
 
     const keyboardRef = useRef(null);
-
     const prevNextKeyRef = useRef(null);
     const prevInputKeyRef = useRef(null);
     const inputTimeoutRef = useRef(null);
@@ -35,7 +34,7 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
         const currentNextKey = nextExpectedKey ? (nextExpectedKey === ' ' ? '{space}' : nextExpectedKey.toLowerCase()) : null;
 
         if (prevNextKey) {
-            keyboard.current.removeButtonTheme(prevNextKey, 'next-key-highlight');
+            keyboard.removeButtonTheme(prevNextKey, 'next-key-highlight');
         }
 
         if (currentNextKey) {
@@ -49,19 +48,7 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
                 keyboard.addButtonTheme(currentNextKey, 'next-key-highlight');
             }
         }
-
         prevNextKeyRef.current = currentNextKey;
-
-        // if (prevNextKeyRef.current && prevNextKeyRef.current !== currentNextKey) {
-        //     keyboard.removeButtonTheme(prevNextKeyRef.current, 'next-key-highlight');
-        // } else if (!currentNextKey && prevNextKeyRef.current) {
-        //     keyboard.removeButtonTheme(prevNextKeyRef.current, 'next-key-highlight');
-        // }
-        //
-        // if (currentNextKey) {
-        //     keyboard.addButtonTheme(currentNextKey, 'next-key-highlight');
-        // }
-        // prevNextKeyRef.current = currentNextKey;
 
     }, [nextExpectedKey]);
 
@@ -96,12 +83,6 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
                 keyboard.addButtonTheme(currentTypedKey, themeToAdd);
             }
 
-            // if (isLastCorrect) {
-            //     keyboard.addButtonTheme(currentTypedKey, 'correct-key');
-            // } else {
-            //     keyboard.addButtonTheme(currentTypedKey, 'incorrect-key');
-            // }
-
             inputTimeoutRef.current = setTimeout(() => {
                 if (keyboard) {
                     keyboard.removeButtonTheme(currentTypedKey, 'correct-key');
@@ -109,33 +90,8 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
                 }
             }, 250);
         }
-
         prevInputKeyRef.current = currentTypedKey
 
-
-        // if (prevInputKeyRef.current && prevInputKeyRef.current !== currentTypedKey) {
-        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'correct-key');
-        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'incorrect-key');
-        // } else if (!currentTypedKey && prevInputKeyRef.current) {
-        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'correct-key');
-        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'incorrect-key');
-        // }
-        //
-        // if (currentTypedKey && (isLastCorrect !== null)) {
-        //     keyboard.removeButtonTheme(currentTypedKey, 'next-key-highlight');
-        //
-        //     if (isLastCorrect) {
-        //         keyboard.addButtonTheme(currentTypedKey, 'correct-key');
-        //     } else {
-        //         keyboard.addButtonTheme(currentTypedKey, 'incorrect-key');
-        //     }
-        //     prevInputKeyRef.current = currentTypedKey;
-        //
-        //     inputTimeoutRef.current = setTimeout(() => {
-        //         keyboard.removeButtonTheme(currentTypedKey, 'correct-key');
-        //         keyboard.removeButtonTheme(currentTypedKey, 'incorrect-key');
-        //     }, 250);
-        // }
     }, [lastKey, isLastCorrect, toggleMap]);
 
     return (
