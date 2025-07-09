@@ -94,7 +94,7 @@ function App() {
 
     return (
         <div className='app-body' style={{fontFamily: selectedFont}}>
-            <h1 className='title'>{!gameStarted ? 'Pick your Preferences:' : 'Type What You See :)'}</h1>
+            <h1 className='title'>{!gameStarted ? 'Pick Your Preferences:' : (currentTime === 0 ? 'Nice Job!' : 'Type What You See :)')}</h1>
             {!gameStarted ? (
                 <SettingsPanel
                     fontProps={fontProps}

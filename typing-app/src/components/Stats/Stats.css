@@ -2,7 +2,14 @@
   background-color: var(--box-background);
   border-radius: 8px;
   color: var(--text-color);
-  padding: 0.6em 1.2em;
-  font-size: 1.8rem;
+  padding: 1em 1em 1em 1em;
+  font-size: 2rem;
   margin-top: 3em;
+  height: 100vh;
+  width: 30vw;
+}
+
+.inner-box {
+  border: 2px dashed var(--text-color);
+  border-radius: 8px;
 }

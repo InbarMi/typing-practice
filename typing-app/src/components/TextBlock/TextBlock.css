@@ -5,10 +5,13 @@
     justify-content: center;
     width: 100%;
     max-width: 50vw;
+    max-height: 50vh;
+    padding: 10px;
+    margin-bottom: 20px;
 }
 
 .text-content-wrapper {
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     color: var(--text-color);
     font-weight: bold;
     position: relative;

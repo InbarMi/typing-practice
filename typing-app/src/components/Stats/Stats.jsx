@@ -9,8 +9,11 @@ function Stats({ stats }) {
 
     return (
         <div className='stats'>
-            <p>WPM: {wpm} </p>
-            <p>Accuracy: {accuracy}% </p>
+            <div className='inner-box'>
+                <h3>Results:</h3>
+                <p>WPM: {wpm} </p>
+                <p>Accuracy: {accuracy}% </p>
+            </div>
         </div>
     )
 }

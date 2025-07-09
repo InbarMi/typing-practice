@@ -1,6 +1,6 @@
 .keymap-container {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column;
     justify-content: center;
     gap: 5px;
     margin-top: 20px;
@@ -10,12 +10,23 @@
     border-radius: 20px;
     background-color: transparent;
     pointer-events: none;
-    width: 50vw;
+    width: 40vw;
 }
 
 .keymap-container .simple-keyboard,
 .keymap-container .hg-button {
     color: var(--accent-1);
+}
+
+.keymap-container .hg-button {
+    border-radius: 10px;
+    flex: 1;
+    padding: 0.5em 0.5em;
+    font-size: 1em;
+}
+
+.simple-keyboard .hg-button.hg-button-space {
+    flex: 2;
 }
 
 .hg-theme-default .hg-button {
@@ -45,6 +56,7 @@
     background-color: transparent;
     border: 2px solid transparent;
     font-size: 25px;
+    margin-left: auto;
 }
 
 .toggleKeymap:hover {

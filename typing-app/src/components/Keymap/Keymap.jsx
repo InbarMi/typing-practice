@@ -14,6 +14,15 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
     const prevInputKeyRef = useRef(null);
     const inputTimeoutRef = useRef(null);
 
+    const layout = {
+        default: [
+            "q w e r t y u i o p [ ]",
+            "a s d f g h j k l ; '",
+            "z x c v b n m , . /",
+            "{space}"
+        ]
+    }
+
     const handleToggleMap = () => {
         setToggleMap(prev => !prev);
     }
@@ -76,12 +85,15 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
     return (
 
         <div className="keymap-container">
+            <div className={!toggleMap ? 'hidden-keyboard' : ''}>
+                <Keyboard
+                    keyboardRef={(r) => (keyboardRef.current = r)}
+                    layout={layout}
+                />
+            </div>
             <button className="toggleKeymap" onClick={handleToggleMap}>
                 <FontAwesomeIcon icon={faKeyboard} />
             </button>
-            <div className={!toggleMap ? 'hidden-keyboard' : ''}>
-                <Keyboard keyboardRef={(r) => (keyboardRef.current = r)} />
-            </div>
         </div>
     )
 }
