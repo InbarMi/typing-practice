@@ -20,6 +20,15 @@
   padding-top: 20px;
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .title {
   text-align: center;
   width: 100%;
@@ -28,6 +37,7 @@
   font-size: 3.5em;
   line-height: 1.1;
   padding: 20px;
+  vertical-align: middle;
 }
 
 .refresh {
@@ -40,11 +50,19 @@
   font-weight: bold;
 }
 
-.refresh:hover {
-  cursor: pointer;
+button:hover {
   color: var(--accent-1);
 }
 
+button:focus {
+  outline: none;
+}
 
-
-
+.soundBtn {
+  background-color: transparent;
+  color: var(--text-color);
+  border: transparent;
+  font-size: 2rem;
+  vertical-align: middle;
+  cursor: pointer;
+}

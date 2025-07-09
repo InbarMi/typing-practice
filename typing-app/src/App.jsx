@@ -3,12 +3,15 @@ import './App.css';
 import TextBlock from './components/TextBlock/TextBlock.jsx';
 import Stats from './components/Stats/Stats.jsx';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel.jsx';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faVolumeOff, faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
     const [selectedFont, setSelectedFont] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [currentTime, setCurrentTime] = useState(null);
     const [selectedLevel, setSelectedLevel] = useState(null);
+    const [playSound, setPlaySound] = useState(true);
 
     const [stats, setStats] = useState({
         totalTyped: 0,
@@ -39,6 +42,10 @@ function App() {
 
     const handleLevelSelect = (level) => {
         setSelectedLevel(level);
+    }
+
+    const handleToggleSound = () => {
+        setPlaySound(prev => !prev);
     }
 
     const handleRefresh = useCallback(() => {
@@ -93,35 +100,51 @@ function App() {
     }
 
     return (
-        <div className='app-body' style={{fontFamily: selectedFont}}>
-            <h1 className='title'>{!gameStarted ? 'Pick Your Preferences:' : (currentTime === 0 ? 'Nice Job!' : 'Type What You See :)')}</h1>
-            {!gameStarted ? (
-                <SettingsPanel
-                    fontProps={fontProps}
-                    timeProps={timeProps}
-                    levelProps={levelProps}
-                    startGame={startGame}
-                />
-            ) : (
-                <>
-                    {
-                        (currentTime === 0) ? (
-                            <Stats stats={stats} />
+        <>
+            <div className='header' style={{fontFamily: selectedFont}}>
+                {(gameStarted && currentTime !== 0) &&
+                    <button className='soundBtn' onClick={handleToggleSound}>
+                        {playSound ? (
+                            <FontAwesomeIcon icon={faVolumeHigh}/>
                         ) : (
-                            <TextBlock
-                                currentTime={currentTime}
-                                setCurrentTime={setCurrentTime}
-                                setStats={setStats}
-                                difficulty={selectedLevel}
-                            />
+                            <FontAwesomeIcon icon={faVolumeOff} />
                         )
-                    }
-                    <button className="refresh" onClick={handleRefresh}>
-                        ↻
+                        }
                     </button>
-                </>
-            )}
-        </div>
+                }
+                <h1 className='title'>{!gameStarted ? 'Pick Your Preferences:' : (currentTime === 0 ? 'Nice Job!' : 'Type What You See :)')}</h1>
+            </div>
+            <div className='app-body' style={{fontFamily: selectedFont}}>
+                {!gameStarted ? (
+                    <SettingsPanel
+                        fontProps={fontProps}
+                        timeProps={timeProps}
+                        levelProps={levelProps}
+                        startGame={startGame}
+                    />
+                ) : (
+                    <>
+                        {
+                            (currentTime === 0) ? (
+                                <Stats stats={stats} />
+                            ) : (
+                                <TextBlock
+                                    currentTime={currentTime}
+                                    setCurrentTime={setCurrentTime}
+                                    setStats={setStats}
+                                    difficulty={selectedLevel}
+                                    playSound={playSound}
+                                />
+                            )
+                        }
+                        <button className="refresh" onClick={handleRefresh}>
+                            ↻
+                        </button>
+                    </>
+                )}
+            </div>
+        </>
+
     )
 }
 
