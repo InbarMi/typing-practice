@@ -29,3 +29,9 @@
 .settings-container .start-game-btn:hover {
     filter: brightness(1.1);
 }
+
+@media (max-width: 1000px) {
+    .options-menu {
+        flex-direction: column;
+    }
+}

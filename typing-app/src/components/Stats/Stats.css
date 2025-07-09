@@ -12,4 +12,12 @@
 .inner-box {
   border: 2px dashed var(--text-color);
   border-radius: 8px;
+  padding: 1em 1em 1em 1em;
+}
+
+@media (max-width: 800px) {
+  .stats {
+    padding: 1.5em 1.5em;
+    font-size: 1.8rem;
+  }
 }

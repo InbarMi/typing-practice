@@ -20,13 +20,8 @@
 
 .keymap-container .hg-button {
     border-radius: 10px;
-    flex: 1;
     padding: 0.5em 0.5em;
     font-size: 1em;
-}
-
-.simple-keyboard .hg-button.hg-button-space {
-    flex: 2;
 }
 
 .hg-theme-default .hg-button {

@@ -30,21 +30,40 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
     useEffect(() => {
         if (!keyboardRef.current) return;
         const keyboard = keyboardRef.current;
+        const prevNextKey = prevNextKeyRef.current;
 
         const currentNextKey = nextExpectedKey ? (nextExpectedKey === ' ' ? '{space}' : nextExpectedKey.toLowerCase()) : null;
 
-        if (prevNextKeyRef.current && prevNextKeyRef.current !== currentNextKey) {
-            keyboard.removeButtonTheme(prevNextKeyRef.current, 'next-key-highlight');
-        } else if (!currentNextKey && prevNextKeyRef.current) {
-            keyboard.removeButtonTheme(prevNextKeyRef.current, 'next-key-highlight');
+        if (prevNextKey) {
+            keyboard.current.removeButtonTheme(prevNextKey, 'next-key-highlight');
         }
 
         if (currentNextKey) {
-            keyboard.addButtonTheme(currentNextKey, 'next-key-highlight');
+            if (currentNextKey === prevNextKey) {
+                setTimeout(() => {
+                    if (keyboard) {
+                        keyboard.addButtonTheme(currentNextKey, 'next-key-highlight');
+                    }
+                }, 100);
+            } else {
+                keyboard.addButtonTheme(currentNextKey, 'next-key-highlight');
+            }
         }
+
         prevNextKeyRef.current = currentNextKey;
 
-    }, [nextExpectedKey, toggleMap]);
+        // if (prevNextKeyRef.current && prevNextKeyRef.current !== currentNextKey) {
+        //     keyboard.removeButtonTheme(prevNextKeyRef.current, 'next-key-highlight');
+        // } else if (!currentNextKey && prevNextKeyRef.current) {
+        //     keyboard.removeButtonTheme(prevNextKeyRef.current, 'next-key-highlight');
+        // }
+        //
+        // if (currentNextKey) {
+        //     keyboard.addButtonTheme(currentNextKey, 'next-key-highlight');
+        // }
+        // prevNextKeyRef.current = currentNextKey;
+
+    }, [nextExpectedKey]);
 
     useEffect(() => {
         if (!keyboardRef.current) return;
@@ -57,10 +76,7 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
             inputTimeoutRef.current = null;
         }
 
-        if (prevInputKeyRef.current && prevInputKeyRef.current !== currentTypedKey) {
-            keyboard.removeButtonTheme(prevInputKeyRef.current, 'correct-key');
-            keyboard.removeButtonTheme(prevInputKeyRef.current, 'incorrect-key');
-        } else if (!currentTypedKey && prevInputKeyRef.current) {
+        if (prevInputKeyRef.current) {
             keyboard.removeButtonTheme(prevInputKeyRef.current, 'correct-key');
             keyboard.removeButtonTheme(prevInputKeyRef.current, 'incorrect-key');
         }
@@ -68,18 +84,58 @@ function Keymap({ nextExpectedKey, lastKey, isLastCorrect }) {
         if (currentTypedKey && (isLastCorrect !== null)) {
             keyboard.removeButtonTheme(currentTypedKey, 'next-key-highlight');
 
-            if (isLastCorrect) {
-                keyboard.addButtonTheme(currentTypedKey, 'correct-key');
+            const themeToAdd = isLastCorrect ? 'correct-key' : 'incorrect-key';
+
+            if (currentTypedKey === prevInputKeyRef.current) {
+                setTimeout(() => {
+                    if (keyboard) {
+                        keyboard.addButtonTheme(currentTypedKey, themeToAdd);
+                    }
+                }, 100);
             } else {
-                keyboard.addButtonTheme(currentTypedKey, 'incorrect-key');
+                keyboard.addButtonTheme(currentTypedKey, themeToAdd);
             }
-            prevInputKeyRef.current = currentTypedKey;
+
+            // if (isLastCorrect) {
+            //     keyboard.addButtonTheme(currentTypedKey, 'correct-key');
+            // } else {
+            //     keyboard.addButtonTheme(currentTypedKey, 'incorrect-key');
+            // }
 
             inputTimeoutRef.current = setTimeout(() => {
-                keyboard.removeButtonTheme(currentTypedKey, 'correct-key');
-                keyboard.removeButtonTheme(currentTypedKey, 'incorrect-key');
+                if (keyboard) {
+                    keyboard.removeButtonTheme(currentTypedKey, 'correct-key');
+                    keyboard.removeButtonTheme(currentTypedKey, 'incorrect-key');
+                }
             }, 250);
         }
+
+        prevInputKeyRef.current = currentTypedKey
+
+
+        // if (prevInputKeyRef.current && prevInputKeyRef.current !== currentTypedKey) {
+        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'correct-key');
+        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'incorrect-key');
+        // } else if (!currentTypedKey && prevInputKeyRef.current) {
+        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'correct-key');
+        //     keyboard.removeButtonTheme(prevInputKeyRef.current, 'incorrect-key');
+        // }
+        //
+        // if (currentTypedKey && (isLastCorrect !== null)) {
+        //     keyboard.removeButtonTheme(currentTypedKey, 'next-key-highlight');
+        //
+        //     if (isLastCorrect) {
+        //         keyboard.addButtonTheme(currentTypedKey, 'correct-key');
+        //     } else {
+        //         keyboard.addButtonTheme(currentTypedKey, 'incorrect-key');
+        //     }
+        //     prevInputKeyRef.current = currentTypedKey;
+        //
+        //     inputTimeoutRef.current = setTimeout(() => {
+        //         keyboard.removeButtonTheme(currentTypedKey, 'correct-key');
+        //         keyboard.removeButtonTheme(currentTypedKey, 'incorrect-key');
+        //     }, 250);
+        // }
     }, [lastKey, isLastCorrect, toggleMap]);
 
     return (
