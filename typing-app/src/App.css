@@ -50,11 +50,11 @@
   font-weight: bold;
 }
 
-button:hover {
+.refresh:hover {
   color: var(--accent-1);
 }
 
-button:focus {
+.refresh:focus {
   outline: none;
 }
 
@@ -65,4 +65,12 @@ button:focus {
   font-size: 2rem;
   vertical-align: middle;
   cursor: pointer;
+}
+
+.soundBtn:hover {
+  color: var(--accent-1);
+}
+
+.soundBtn:focus {
+  outline: none;
 }
