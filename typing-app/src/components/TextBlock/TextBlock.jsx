@@ -3,7 +3,7 @@ import './TextBlock.css';
 import Timer from '../Timer/Timer.jsx';
 import {generate} from 'random-words';
 import Keymap from "../Keymap/Keymap.jsx";
-const keyPressSoundPath = '../../public/audio/mech-key.mp3';
+import keyPressSoundPath from '../../assets/mech-key.mp3';
 
 function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSound }) {
     const [wordList, setWordList] = useState([]);
