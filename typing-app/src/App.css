@@ -1,7 +1,8 @@
 #root {
+  height: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0;
   text-align: center;
   cursor: default;
 }
@@ -18,6 +19,8 @@
   height: 60vh;
   width: 100%;
   padding-top: 20px;
+  flex-grow: 1;
+  box-sizing: border-box;
 }
 
 .header {
@@ -27,6 +30,7 @@
   padding: 15px 20px;
   width: 100%;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .title {
@@ -37,7 +41,6 @@
   font-size: 3.5em;
   line-height: 1.1;
   padding: 20px;
-  vertical-align: middle;
 }
 
 .refresh {
@@ -64,7 +67,6 @@
   color: var(--text-color);
   border: transparent;
   font-size: 2rem;
-  vertical-align: middle;
   cursor: pointer;
 }
 
