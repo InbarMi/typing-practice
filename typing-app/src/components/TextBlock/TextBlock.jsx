@@ -5,31 +5,59 @@ import {generate} from 'random-words';
 import Keymap from "../Keymap/Keymap.jsx";
 import keyPressSoundPath from '../../assets/mech-key.mp3';
 
+/**
+ * TextBlock component manages the core typing practice logic.
+ * It displays the text to be typed, handles user input, tracks progress,
+ * and integrates with the timer and keyboard map.
+ *
+ * @param {object} props - The component props.
+ * @param {number} props.currentTime - The current time remaining in the session.
+ * @param {function(number): void} props.setCurrentTime - Callback to update the current time in the parent.
+ * @param {function(object): void} props.setStats - Callback to update typing statistics in the parent.
+ * @param {string} props.difficulty - The selected difficulty level for text generation.
+ * @param {boolean} props.playSound - Flag indicating whether typing sound effects should play.
+ */
 function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSound }) {
+    // states for managing the typing session's text, progress, and timer
     const [wordList, setWordList] = useState([]);
     const [textIndex, setTextIndex] = useState(0);
     const [correctIndices, setCorrectIndices] = useState([]);
     const [startTimer, setStartTimer] = useState(false);
+
+    // states for tracking typing performance metrics
     const [totalTyped, setTotalTyped] = useState(0);
     const [totalCorrect, setTotalCorrect] = useState(0);
+
+    // states for providing visual feedback to the keymap component
     const [lastKey, setLastKey] = useState(null);
     const [isLastCorrect, setIsLastCorrect] = useState(null);
 
+    // ref for the audio element to play keypress sounds
     const audioRef = useRef(new Audio(keyPressSoundPath));
-    audioRef.constructor.volume = 0.5;
+    audioRef.current.volume = 0.5;
 
+    // calculate total length of the entire text including space between words
     const totalTextLength = wordList.reduce((sum, word) => sum + word.length, 0) + (wordList.length > 0 ? wordList.length - 1 : 0);
 
+    /**
+     * Retrieves the character at a given global index from the `wordList`.
+     * This handles both characters within words and spaces between words.
+     *
+     * @param {number} globalIndex - The absolute index of the character in the entire text.
+     * @returns {string} The character at the specified global index.
+     */
     const getCurrentChar = useCallback((globalIndex) => {
         let cumulativeLength = 0;
         for (let i = 0; i < wordList.length; i++) {
             const word = wordList[i];
 
+            // check if the global index falls within the current word
             if (globalIndex >= cumulativeLength && globalIndex < cumulativeLength + word.length) {
                 return word[globalIndex - cumulativeLength];
             }
             cumulativeLength += word.length;
 
+            // check for space between words
             if (i < wordList.length - 1) {
                 if (globalIndex === cumulativeLength) {
                     return ' ';
@@ -40,8 +68,15 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
         return '';
     }, [wordList]);
 
+    /**
+     * Generates a random sentence based on the specified difficulty level using `random-words` library.
+     *
+     * @param {string} difficulty - The difficulty level ('easy', 'normal', 'hard').
+     * @returns {Array<string>} An array of words forming the sentence.
+     */
     const getRandomSentence = useCallback((difficulty) => {
 
+        // default (normal) word options
         let options = {
             exactly: 12,
             maxLength: 8,
@@ -65,6 +100,10 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
 
     }, [difficulty]);
 
+    /**
+     * Effect hook to initialize the word list when the component mounts.
+     * Resets text index and correctness tracking.
+     */
     useEffect(() => {
         const words = getRandomSentence(difficulty);
         setWordList(words);
@@ -72,6 +111,10 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
         setCorrectIndices([]);
     }, [getRandomSentence, difficulty]);
 
+    /**
+     * Effect hook to generate a new sentence if the current one is fully typed
+     * and the timer is still running.
+     */
     useEffect(() => {
         if (currentTime > 0 && textIndex === totalTextLength) {
             const words = getRandomSentence(difficulty);
@@ -81,6 +124,9 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
         }
     }, [currentTime, textIndex, getRandomSentence, totalTextLength, difficulty]);
 
+    /**
+     * Effect hook to update parent component's statistics whenever `totalTyped` or `totalCorrect` changes.
+     */
     useEffect(() => {
         setStats(prev => ({
             ...prev,
@@ -89,24 +135,31 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
         }));
     }, [totalTyped, totalCorrect]);
 
-    // keydown listener setup
+    /**
+     * Effect hook to set up and clean up the global `keydown` event listener.
+     * This listener captures user typing input.
+     */
     useEffect(() => {
         const handleKeyDown = (event) => {
             const key = event.key;
             const currentIndex = textIndex;
 
+            // reset last key and correctness status for the Keymap component
             setLastKey(null);
             setIsLastCorrect(null)
 
+            // start the timer on the first key press if it hasn't started yet
             if (!startTimer) {
                 setStartTimer(true);
             }
 
+            // play keypress sound if enabled
             if (playSound) {
                 audioRef.current.currentTime = 0;
                 audioRef.current.play().catch(e => console.error("Error playing sound: ", e));
             }
 
+            // handle regular character input (single character, not backspace)
             if (key.length === 1 && key !== 'Backspace') {
                 setTotalTyped(prev => prev + 1);
 
@@ -117,27 +170,33 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
                     setTotalCorrect(prev => prev + 1);
                 }
 
+                // update the correctness array at current index
                 setCorrectIndices(prevState => {
                     const updated = [...prevState];
                     updated[currentIndex] = isCorrect;
                     return updated;
                 })
+                // move cursor to the next position, not exceeding total text length
                 setTextIndex(prevIndex => Math.min(totalTextLength, prevIndex + 1));
+
+                // update Keymap props for the last typed key feedback
                 setLastKey(key);
                 setIsLastCorrect(isCorrect);
             }
 
-            // shift cursor
+            // handle backspace key to move cursor back and clear correctness status
             if (key === 'Backspace') {
-                // if key was wrong and typed backspace, make it not red anymore
+                // move cursor back, not below 0
                 setTextIndex(prevIndex => Math.max(0, prevIndex - 1));
 
+                // clear the correctness status for the character that was 'deleted' to remove the highlight
                 setCorrectIndices(prevState => {
                     const updated = [...prevState];
                     updated[textIndex - 1] = null;
                     return updated;
 
                 });
+                // clear keymap feedback for the last key
                 setLastKey(null);
                 setIsLastCorrect(null);
             }
@@ -149,13 +208,16 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
         }
     }, [textIndex, startTimer, totalTextLength, getCurrentChar, playSound]);
 
+
     let currentGlobalIndex = 0;
 
     return (
         <div className="text-block-container">
             <Timer startTimer={startTimer} currentTime={currentTime} setCurrentTime={setCurrentTime} />
             <div className="text-content-wrapper">
+                {/* Map over words to render the typing text */}
                 { wordList.map((word, wordIndex) => {
+                    // map over characters within each word
                     const wordSpans = word.split('').map((char, charInWordIndex) => {
                         const globalCharIndex = currentGlobalIndex + charInWordIndex;
                         const isCursorPosition = globalCharIndex === textIndex;
@@ -167,20 +229,24 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
 
                         return (
                             <span key={globalCharIndex} className={className}>
+                                {/* Render cursor at current position */}
                                 {isCursorPosition && <span className="cursor"/> }
                                 {char}
                             </span>
                         );
                     });
 
+                    // update global index for the next word
                     currentGlobalIndex += word.length;
 
                     let spaceSeparator = null;
+
+                    // add a space separator between words, but not after the last word
                     if (wordIndex < wordList.length - 1) {
                         spaceSeparator = (
                             <span key={`space-${currentGlobalIndex}`} className='space-separator'>
                                 {currentGlobalIndex === textIndex && <span className="cursor"/>}
-                                {'\u00A0'}
+                                {'\u00A0'} {/* Non-breaking space */}
                             </span>
                         );
                         currentGlobalIndex++;
