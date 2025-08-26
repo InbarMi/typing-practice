@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import './Timer.css'
+import { useEffect } from "react";
+import './Timer.css';
 
 /**
  * Timer component displays a countdown and manages the timing logic for the typing session.
@@ -30,7 +30,7 @@ function Timer({ startTimer, currentTime, setCurrentTime }) {
 
         return () => clearInterval(countdownInterval);
 
-    }, [startTimer]);
+    }, [startTimer, currentTime, setCurrentTime]);
 
     return (
         <div className='timer'>

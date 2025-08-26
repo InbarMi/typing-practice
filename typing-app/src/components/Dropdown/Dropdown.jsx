@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from "react";
+import { useCallback, useEffect, useRef } from "react";
 import "./Dropdown.css";
 
 /**

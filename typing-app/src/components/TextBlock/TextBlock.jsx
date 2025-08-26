@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import './TextBlock.css';
-import Timer from '../Timer/Timer.jsx';
-import {generate} from 'random-words';
-import Keymap from "../Keymap/Keymap.jsx";
+import { generate } from 'random-words';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import keyPressSoundPath from '../../assets/mech-key.mp3';
+import Keymap from "../Keymap/Keymap.jsx";
+import Timer from '../Timer/Timer.jsx';
+import './TextBlock.css';
 
 /**
  * TextBlock component manages the core typing practice logic.
@@ -133,7 +133,7 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
             totalTyped,
             totalCorrect
         }));
-    }, [totalTyped, totalCorrect]);
+    }, [totalTyped, totalCorrect, setStats]);
 
     /**
      * Effect hook to set up and clean up the global `keydown` event listener.
