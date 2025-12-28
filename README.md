@@ -4,6 +4,8 @@ This is a web application designed to help users improve their typing speed and 
 ## Overview
 The typing practice app provides an interactive platform for users to enhance their typing skills. It features a clean interface and real-time feedback, making the learning process engaging and effective.
 
+This project was built primarily as a learning exercise for React. I wanted a project that was interactive, UI-driven, and fun to use. I also wanted a typing practice app that felt simpler and more focused than existing tools found online, which offer a lot of configuration and features, sometimes to an overwhelming extent.
+
 
 ## Features
 * Customizable Practice Settings: Users can choose their preferred font, practice duration, and difficulty level to suit their individual needs.
@@ -16,6 +18,24 @@ The typing practice app provides an interactive platform for users to enhance th
 * React
 * JavaScript
 * CSS
+* Vite
+* Docker
+* nginx
+
+## Running the App
+The application is containerized and can be run locally using Docker. Docker should be installed. Use the following to build and run the app:
+
+```
+npm run docker:start
+```
+
+The app will be available at: http://localhost:8080
+
+To stop and clean up, use the following:
+
+```
+npm run docker:clean
+```
 
 ## Demo
 Here's a quick look at the app in action:

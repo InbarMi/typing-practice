@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "docker:build": "docker build -t typing-app .",
+    "docker:run": "docker run -d --restart unless-stopped --name typing-app -p 8080:80 typing-app",
+    "docker:start": "npm run docker:build && npm run docker:run",
+    "docker:clean": "docker stop typing-app 2>NUL && docker rm typing-app",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -16,8 +20,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "random-words": "^2.0.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-simple-keyboard": "^3.8.88"
   },
   "devDependencies": {
