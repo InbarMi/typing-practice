@@ -1,5 +1,5 @@
 # Typing Practice App
-This is a web application designed to help users improve their typing speed and accueracy. It offers a customizable practice environment where users can select various options to tailor their typing experience.
+This is a web application designed to help users improve their typing speed and accuracy. It offers a customizable practice environment where users can select various options to tailor their typing experience.
 
 ## Overview
 The typing practice app provides an interactive platform for users to enhance their typing skills. It features a clean interface and real-time feedback, making the learning process engaging and effective.
