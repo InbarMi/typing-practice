@@ -3,10 +3,8 @@ package com.inbarmi.typing_app_api.service;
 import org.springframework.stereotype.Service;
 import com.inbarmi.typing_app_api.entity.TypingSession;
 import com.inbarmi.typing_app_api.repository.TypingSessionRepository;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class TypingSessionService {
 
     private TypingSessionRepository repository;
