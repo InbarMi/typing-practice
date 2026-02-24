@@ -9,6 +9,10 @@ public class TypingSessionService {
 
     private TypingSessionRepository repository;
 
+    public TypingSessionService(TypingSessionRepository repo) {
+        this.repository = repo;
+    }
+
     public TypingSession saveTypingSession(int totalTyped, int totalCorrect, int time) {
         if (totalTyped < 0 || totalCorrect < 0 || time <= 0 || totalCorrect > totalTyped) {
             throw new IllegalArgumentException("Invalid input");
