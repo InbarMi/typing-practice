@@ -1,16 +1,27 @@
 package com.inbarmi.typing_app_api.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.extension.ExtendWith;
 import com.inbarmi.typing_app_api.entity.TypingSession;
+import com.inbarmi.typing_app_api.repository.TypingSessionRepository;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TypingSessionServiceTest {
+
+    @Mock
+    private TypingSessionRepository repository;
+
+    @InjectMocks
+    private TypingSessionService service;
 
     @Test
     void shouldRejectNegativeTotalTyped() {
-        TypingSessionService service = new TypingSessionService();
         int totalTyped = -100;
         int totalCorrect = 50;
         int time = 60;
@@ -22,7 +33,6 @@ class TypingSessionServiceTest {
 
     @Test
     void shouldRejectNegativeTotalCorrect() {
-        TypingSessionService service = new TypingSessionService();
         int totalTyped = 100;
         int totalCorrect = -50;
         int time = 60;
@@ -34,7 +44,6 @@ class TypingSessionServiceTest {
 
     @Test
     void shouldRejectZeroTime() {
-        TypingSessionService service = new TypingSessionService();
         int totalTyped = 150;
         int totalCorrect = 125;
         int time = 0;
@@ -46,7 +55,6 @@ class TypingSessionServiceTest {
 
     @Test
     void shouldRejectNegativeTime() {
-        TypingSessionService service = new TypingSessionService();
         int totalTyped = 150;
         int totalCorrect = 125;
         int time = -60;
@@ -58,7 +66,6 @@ class TypingSessionServiceTest {
 
     @Test
     void shouldRejectTotalCorrectExceedsTotalTyped() {
-        TypingSessionService service = new TypingSessionService();
         int totalTyped = 100;
         int totalCorrect = 150;
         int time = 60;
@@ -70,11 +77,15 @@ class TypingSessionServiceTest {
 
     @Test
     void saveTypingSessionShouldReturnSessionForValidInputs() {
-        TypingSessionService service = new TypingSessionService();
         int totalTyped = 300;
         int totalCorrect = 270;
         int time = 60;
 
+        TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
+
+        when(repository.save(Mockito.any()))
+            .thenReturn(mockSession);
+        
         TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
 
         assertEquals(totalTyped, result.getTotalTyped());
