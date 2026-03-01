@@ -41,9 +41,9 @@ npm run docker:clean
 Here's a quick look at the app in action:
 
 <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px">
-    <img src="resources/settingsPanel.gif" alt="Typing App Settings Demo" style="width: 600px; height: auto"/>
-    <img src="resources/typing.gif" alt="Typing App Typing Practice Demo" style="width: 600px; height: auto"/>
-    <img src="resources/results.png" alt="Typing App Results Panel" style="width: 600px; height: auto" />
+    <img src="frontend/resources/settingsPanel.gif" alt="Typing App Settings Demo" style="width: 600px; height: auto"/>
+    <img src="frontend/resources/typing.gif" alt="Typing App Typing Practice Demo" style="width: 600px; height: auto"/>
+    <img src="frontend/resources/results.png" alt="Typing App Results Panel" style="width: 600px; height: auto" />
 </div>
 
 
