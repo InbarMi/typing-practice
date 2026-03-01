@@ -20,4 +20,13 @@ public class TypingSessionService {
         TypingSession session = new TypingSession(totalTyped, totalCorrect, time);
         return repository.save(session);
     }
+
+    public int getSessionWpm(Long sessionId) {
+        return -1;
+    }
+
+    public int getSessionAccuracy(Long sessionId) {
+        return -1;
+    }
+
 }
