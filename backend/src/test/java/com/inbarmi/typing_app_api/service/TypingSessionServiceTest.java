@@ -103,12 +103,10 @@ class TypingSessionServiceTest {
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
-        when(repository.save(any()))
+        when(repository.getReferenceById(1L))
             .thenReturn(mockSession);
 
-        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
-
-        int wpm = service.getSessionWpm(result.getId());
+        int wpm = service.getSessionWpm(1L);
         
         assertEquals(60, wpm);
     }
@@ -122,12 +120,10 @@ class TypingSessionServiceTest {
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
-        when(repository.save(any()))
+        when(repository.getReferenceById(1L))
             .thenReturn(mockSession);
 
-        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
-
-        int wpm = service.getSessionWpm(result.getId());
+        int wpm = service.getSessionWpm(1L);
         
         assertEquals(56, wpm);
     }
@@ -140,12 +136,10 @@ class TypingSessionServiceTest {
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
-        when(repository.save(any()))
+        when(repository.getReferenceById(1L))
             .thenReturn(mockSession);
 
-        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
-
-        int wpm = service.getSessionWpm(result.getId());
+        int wpm = service.getSessionWpm(1L);
         
         assertEquals(0, wpm);
     }
@@ -161,12 +155,10 @@ class TypingSessionServiceTest {
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
-        when(repository.save(any()))
+        when(repository.getReferenceById(1L))
             .thenReturn(mockSession);
 
-        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
-
-        int accuracy = service.getSessionAccuracy(result.getId());
+        int accuracy = service.getSessionAccuracy(1L);
         
         assertEquals(83, accuracy);
     }
@@ -181,12 +173,10 @@ class TypingSessionServiceTest {
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
-        when(repository.save(any()))
+        when(repository.getReferenceById(1L))
             .thenReturn(mockSession);
 
-        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
-
-        int accuracy = service.getSessionAccuracy(result.getId());
+        int accuracy = service.getSessionAccuracy(1L);
         
         assertEquals(92, accuracy);
     }
@@ -199,12 +189,10 @@ class TypingSessionServiceTest {
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
-        when(repository.save(any()))
+        when(repository.getReferenceById(1L))
             .thenReturn(mockSession);
 
-        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
-
-        int accuracy = service.getSessionAccuracy(result.getId());
+        int accuracy = service.getSessionAccuracy(1L);
         
         assertEquals(0, accuracy);
     }
