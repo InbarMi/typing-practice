@@ -112,6 +112,44 @@ class TypingSessionServiceTest {
         
         assertEquals(60, wpm);
     }
+    @Test
+    void validInputReturnsRoundedWpm() {
+        // (totalTyped / 5) / (time / 60)
+        // expected 56 wpm (round 55.6)
+        int totalTyped = 278;
+        int time = 60;
+        int totalCorrect = 250;
+
+        TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
+
+        when(repository.save(any()))
+            .thenReturn(mockSession);
+
+        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
+
+        int wpm = service.getSessionWpm(result.getId());
+        
+        assertEquals(56, wpm);
+    }
+
+    @Test
+    void nothingTypedShouldReturnZeroWpm() {
+        int totalTyped = 0;
+        int totalCorrect = 0;
+        int time = 60;
+
+        TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
+
+        when(repository.save(any()))
+            .thenReturn(mockSession);
+
+        TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
+
+        int wpm = service.getSessionWpm(result.getId());
+        
+        assertEquals(0, wpm);
+    }
+
 
     @Test
     void validInputReturnsCorrectAccuracy() {
@@ -134,10 +172,12 @@ class TypingSessionServiceTest {
     }
 
     @Test
-    void nothingTypedShouldReturnZeroWpm() {
-        int totalTyped = 0;
-        int totalCorrect = 0;
+    void validInputReturnsRoundedAccuracy() {
+        // (totalCorrect / totalTyped) * 100
+        // expected 92% (round 91.6)
+        int totalTyped = 300;
         int time = 60;
+        int totalCorrect = 275;
 
         TypingSession mockSession = new TypingSession(totalTyped, totalCorrect, time);
 
@@ -146,9 +186,9 @@ class TypingSessionServiceTest {
 
         TypingSession result = service.saveTypingSession(totalTyped, totalCorrect, time);
 
-        int wpm = service.getSessionWpm(result.getId());
+        int accuracy = service.getSessionAccuracy(result.getId());
         
-        assertEquals(0, wpm);
+        assertEquals(92, accuracy);
     }
 
     @Test
