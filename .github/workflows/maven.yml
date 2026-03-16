@@ -10,11 +10,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches:
-      - backend-integration
   pull_request:
-    branches:
-      - backend-integration
 
 jobs:
   build:
