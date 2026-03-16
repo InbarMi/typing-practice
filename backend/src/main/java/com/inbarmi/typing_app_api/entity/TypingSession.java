@@ -20,6 +20,9 @@ public class TypingSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
+    private String userId;
+
     @Column(name = "total_typed")
     private int totalTyped;
 
@@ -33,9 +36,10 @@ public class TypingSession {
     @CreationTimestamp
     private Instant createdAt;
 
-    public TypingSession(int totalTyped, int totalCorrect, int timeInSeconds) {
+    public TypingSession(int totalTyped, int totalCorrect, int timeInSeconds, String userId) {
         this.totalTyped = totalTyped;
         this.totalCorrect = totalCorrect;
         this.timeInSeconds = timeInSeconds;
+        this.userId = userId;
     }
 }

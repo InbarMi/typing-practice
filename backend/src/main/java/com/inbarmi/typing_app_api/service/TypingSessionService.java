@@ -1,8 +1,13 @@
 package com.inbarmi.typing_app_api.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import com.inbarmi.typing_app_api.entity.TypingSession;
+import com.inbarmi.typing_app_api.mapper.TypingSessionMapper;
 import com.inbarmi.typing_app_api.repository.TypingSessionRepository;
+import com.inbarmi.typing_app_api.dto.*;
+import com.inbarmi.typing_app_api.exception.*;
 
 @Service
 public class TypingSessionService {
@@ -13,32 +18,34 @@ public class TypingSessionService {
         this.repository = repo;
     }
 
-    public TypingSession saveTypingSession(int totalTyped, int totalCorrect, int time) {
+    public TypingSessionResponse saveTypingSession(String userId, TypingSessionRequest request) {
+        int totalTyped = request.getTotalTyped();
+        int totalCorrect = request.getTotalCorrect();
+        int time = request.getTimeInSeconds();
+
         if (totalTyped < 0 || totalCorrect < 0 || time <= 0 || totalCorrect > totalTyped) {
             throw new IllegalArgumentException("Invalid input");
         }
-        TypingSession session = new TypingSession(totalTyped, totalCorrect, time);
-        return repository.save(session);
+        TypingSession session = new TypingSession(totalTyped, totalCorrect, time, userId);
+        TypingSession saved = repository.save(session);
+
+        return mapSession(saved);
     }
 
-    public int getSessionWpm(Long sessionId) {
-        if (sessionId == null) {
-            throw new IllegalArgumentException("Invalid session Id");
-        }
+    public TypingSessionResponse getSessionById(Long sessionId) {
+        TypingSession session = repository.findById(sessionId)
+            .orElseThrow(() ->
+                new ResourceNotFoundException("Session does not exist with id: " + sessionId));
 
-        TypingSession session = repository.getReferenceById(sessionId);
-        
-        return calcWpm(session.getTotalTyped(), session.getTimeInSeconds());
+        return mapSession(session);
     }
 
-    public int getSessionAccuracy(Long sessionId) {
-        if (sessionId == null) {
-            throw new IllegalArgumentException("Invalid session Id");
-        }
+    public List<TypingSessionResponse> getAllSessionsForUser(String userId) {
+        List<TypingSession> sessions = repository.findByUserId(userId);
 
-        TypingSession session = repository.getReferenceById(sessionId);
-        
-        return calcAccuracy(session.getTotalCorrect(), session.getTotalTyped());
+        return sessions.stream()
+            .map(this::mapSession)
+            .toList();
     }
 
     private int calcWpm(int totalTyped, int time) {
@@ -58,5 +65,12 @@ public class TypingSessionService {
         }
 
         return Math.round((totalCorrect * 100.0f) / totalTyped);
+    }
+
+    private TypingSessionResponse mapSession(TypingSession session) {
+        int wpm = calcWpm(session.getTotalTyped(), session.getTimeInSeconds());
+        int accuracy = calcAccuracy(session.getTotalCorrect(), session.getTotalTyped());
+
+        return TypingSessionMapper.toResponse(session, wpm, accuracy);
     }
 }
