@@ -1,7 +1,5 @@
 package com.inbarmi.typing_app_api.dto;
 
-import java.time.Instant;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

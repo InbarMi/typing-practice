@@ -29,6 +29,10 @@ function App() {
         time: selectedTime
     });
 
+    // states to track if session is saved
+    const [sessionSaved, setSessionSaved] = useState(false);
+    const [sessionResponse, setSessionResponse] = useState(null)
+
     /**
      * Initializes a new typing session.
      * Sets the timer, resets statistics, and flags the game as started.
@@ -42,7 +46,6 @@ function App() {
         });
         setGameStarted(true);
     }, [selectedTime, setCurrentTime, setStats])
-
 
     /**
      * Handles font selection from the settings.
@@ -91,6 +94,44 @@ function App() {
         setSelectedTime(null);
         setSelectedLevel(null);
     }, [selectedTime]);
+
+    /**
+     * When timer runs out, save session data
+     */
+    useEffect(() => {
+        const saveSession = async () => {
+            try {
+                const userId = "test-user-1";
+
+                const response = await fetch(`http://localhost:8080/sessions/user/${userId}`, {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        totalTyped: stats.totalTyped,
+                        totalCorrect: stats.totalCorrect,
+                        timeInSeconds: stats.time
+                    })
+                })
+
+                if (!response.ok) {
+                    throw new Error("Failed to save last session");
+                }
+
+                const data = await response.json();
+
+                setSessionResponse(data);
+                setSessionSaved(true);
+            } catch (error) {
+                console.error("Failed to save last session", error);
+            }
+        };
+
+        if (gameStarted && currentTime === 0 && !sessionSaved) {
+            saveSession();
+        }
+    }, [currentTime, gameStarted, sessionSaved, stats])
 
     /**
      * Effect to listen for the 'Enter' key press to restart the game after a session ends.
@@ -155,8 +196,8 @@ function App() {
                 ) : (
                     <>
                         {/* Displays Stats when time is up, otherwise shows TextBlock for typing */}
-                        {(currentTime === 0) ? (
-                            <Stats stats={stats} />
+                        {(currentTime === 0 && sessionSaved) ? (
+                            <Stats stats={sessionResponse} />
                         ) : (
                             <TextBlock
                                 currentTime={currentTime}

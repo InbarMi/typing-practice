@@ -141,6 +141,8 @@ function TextBlock( { currentTime, setCurrentTime, setStats, difficulty, playSou
      */
     useEffect(() => {
         const handleKeyDown = (event) => {
+            if (currentTime === 0) return;
+            
             const key = event.key;
             const currentIndex = textIndex;
 
