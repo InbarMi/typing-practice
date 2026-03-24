@@ -6,15 +6,26 @@ import './Stats.css';
  * including Words Per Minute (WPM) and accuracy percentage.
  *
  * @param {object} props - The component props.
- * @param {object} props.stats - An object containing the session statistics.
- * @param {number} props.stats.totalTyped - The total number of characters typed by the user.
- * @param {number} props.stats.totalCorrect - The total number of correctly typed characters.
- * @param {number} props.stats.time - The initial duration of the typing session in seconds.
+ * @param {object} props.stats - An object containing the session data including statistics.
+ * @param {number} props.stats.wpm - average number of words typed per minute
+ * @param {number} props.stats.accuracy - total correct / total typed (percentage)
  */
 function Stats({ stats }) {
-    const { totalTyped, totalCorrect, time } = stats;
-    const accuracy = Math.round((totalCorrect / totalTyped) * 100);
-    const wpm = Math.round((totalTyped / 5) / (time / 60)); // assume average word length of 5 characters
+    // const { totalTyped, totalCorrect, time } = stats;
+    // const accuracy = Math.round((totalCorrect / totalTyped) * 100);
+    // const wpm = Math.round((totalTyped / 5) / (time / 60)); // assume average word length of 5 characters
+
+    if (!stats || !stats.wpm || !stats.accuracy) {
+        return (
+            <div className='stats'>
+                <div className='inner-box'>
+                    <p>Session Not Saved</p>
+                </div>
+            </div>
+        )
+    }
+    const wpm = stats.wpm;
+    const accuracy = stats.accuracy;
 
     return (
         <div className='stats'>
