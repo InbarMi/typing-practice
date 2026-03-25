@@ -1,0 +1,22 @@
+.loginContainer {
+    background-color: transparent;
+    color: var(--text-color);
+    width: 30vw;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+button {
+    border-radius: 8px;
+    font-size: 1.5rem;
+    padding: 0.4em 0.8em;
+    background-color: #3A4557;
+    border: none;
+}
+
+button:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+    background-color: #4A5568;
+}
