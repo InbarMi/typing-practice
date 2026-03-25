@@ -11,11 +11,8 @@ import './Stats.css';
  * @param {number} props.stats.accuracy - total correct / total typed (percentage)
  */
 function Stats({ stats }) {
-    // const { totalTyped, totalCorrect, time } = stats;
-    // const accuracy = Math.round((totalCorrect / totalTyped) * 100);
-    // const wpm = Math.round((totalTyped / 5) / (time / 60)); // assume average word length of 5 characters
-
-    if (!stats || !stats.wpm || !stats.accuracy) {
+    
+    if (!stats) {
         return (
             <div className='stats'>
                 <div className='inner-box'>
@@ -24,15 +21,13 @@ function Stats({ stats }) {
             </div>
         )
     }
-    const wpm = stats.wpm;
-    const accuracy = stats.accuracy;
 
     return (
         <div className='stats'>
             <div className='inner-box'>
                 <h3>Results:</h3>
-                <p>WPM: {wpm} </p>
-                <p>Accuracy: {accuracy}% </p>
+                <p>WPM: {stats.wpm} </p>
+                <p>Accuracy: {stats.accuracy}% </p>
             </div>
         </div>
     )
