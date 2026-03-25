@@ -1,6 +1,7 @@
 // App.jsx - Main application component for the Typing Practice App
 
 import {useCallback, useEffect, useState} from 'react';
+import Login from './components/Login/Login.jsx'
 import TextBlock from './components/TextBlock/TextBlock.jsx';
 import Stats from './components/Stats/Stats.jsx';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel.jsx';
@@ -14,6 +15,15 @@ import './App.css';
  * the rendering of different UI sections (settings, typing area, results).
  */
 function App() {
+    // States for user identity state
+    const [userId, setUserId] = useState(null);
+    const [isGuest, setIsGuest] = useState(false);
+
+    const handleGuest = () => {
+        setUserId("guest");
+        setIsGuest(true);
+    };
+
     // States for user-selected preferences and game status
     const [selectedFont, setSelectedFont] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
@@ -31,7 +41,7 @@ function App() {
 
     // states to track if session is saved
     const [sessionSaved, setSessionSaved] = useState(false);
-    const [sessionResponse, setSessionResponse] = useState(null)
+    const [sessionResult, setSessionResult] = useState(null)
 
     /**
      * Initializes a new typing session.
@@ -121,7 +131,10 @@ function App() {
 
                 const data = await response.json();
 
-                setSessionResponse(data);
+                setSessionResult({
+                    wpm: data.wpm,
+                    accuracy: data.accuracy
+                });
                 setSessionSaved(true);
             } catch (error) {
                 console.error("Failed to save last session", error);
@@ -129,7 +142,24 @@ function App() {
         };
 
         if (gameStarted && currentTime === 0 && !sessionSaved) {
-            saveSession();
+            if (!isGuest) {
+                saveSession();
+            } else {
+                // compute stats locally without persisting
+                const accuracy = stats.totalTyped > 0
+                    ? Math.round((stats.totalCorrect / stats.totalTyped) * 100)
+                    : 0;
+                
+                const wpm = stats.time > 0
+                    ? Math.round((stats.totalTyped / 5) / (stats.time / 60))
+                    : 0;
+
+                setSessionResult({
+                    wpm: wpm,
+                    accuracy: accuracy
+                });
+                setSessionSaved(true);
+            }
         }
     }, [currentTime, gameStarted, sessionSaved, stats])
 
@@ -185,31 +215,37 @@ function App() {
                 <h1 className='title'>{!gameStarted ? 'Pick Your Preferences:' : (currentTime === 0 ? 'Nice Job!' : 'Type What You See :)')}</h1>
             </div>
             <div className='app-body' style={{fontFamily: selectedFont}}>
-                {/* Conditionally renders SettingsPanel or game-related components */}
-                {!gameStarted ? (
-                    <SettingsPanel
-                        fontProps={fontProps}
-                        timeProps={timeProps}
-                        levelProps={levelProps}
-                        startGame={startGame}
-                    />
+                {!userId ? (
+                    <Login onGuest={handleGuest} />
                 ) : (
                     <>
-                        {/* Displays Stats when time is up, otherwise shows TextBlock for typing */}
-                        {(currentTime === 0 && sessionSaved) ? (
-                            <Stats stats={sessionResponse} />
-                        ) : (
-                            <TextBlock
-                                currentTime={currentTime}
-                                setCurrentTime={setCurrentTime}
-                                setStats={setStats}
-                                difficulty={selectedLevel}
-                                playSound={playSound}
+                        {/* Conditionally renders SettingsPanel or game-related components */}
+                        {!gameStarted ? (
+                            <SettingsPanel
+                                fontProps={fontProps}
+                                timeProps={timeProps}
+                                levelProps={levelProps}
+                                startGame={startGame}
                             />
-                            )}
-                        <button className="refresh" onClick={handleRefresh}>
-                            ↻
-                        </button>
+                        ) : (
+                            <>
+                                {/* Displays Stats when time is up, otherwise shows TextBlock for typing */}
+                                {(currentTime === 0 && sessionSaved) ? (
+                                    <Stats stats={sessionResult} />
+                                ) : (
+                                    <TextBlock
+                                        currentTime={currentTime}
+                                        setCurrentTime={setCurrentTime}
+                                        setStats={setStats}
+                                        difficulty={selectedLevel}
+                                        playSound={playSound}
+                                    />
+                                    )}
+                                <button className="refresh" onClick={handleRefresh}>
+                                    ↻
+                                </button>
+                            </>
+                        )}
                     </>
                 )}
             </div>
