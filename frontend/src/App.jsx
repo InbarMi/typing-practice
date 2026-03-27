@@ -1,7 +1,9 @@
 // App.jsx - Main application component for the Typing Practice App
 
 import {useCallback, useEffect, useState} from 'react';
-import Login from './components/Login/Login.jsx'
+import Login from './components/Login/Login.jsx';
+import { auth } from './firebase.js';
+import { onAuthStateChanged } from 'firebase/auth';
 import TextBlock from './components/TextBlock/TextBlock.jsx';
 import Stats from './components/Stats/Stats.jsx';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel.jsx';
@@ -19,10 +21,40 @@ function App() {
     const [userId, setUserId] = useState(null);
     const [isGuest, setIsGuest] = useState(false);
 
+    // handles switching to guest mode, clears authenticated user state
     const handleGuest = () => {
-        setUserId("guest");
+        setUserId(null);
         setIsGuest(true);
     };
+
+    /**
+     * Logs user out of the application (or moves to login form if in guest mode)
+     * Clears authentication state and resets session related data
+     */
+    const handleLogout = () => {
+        setUserId(null);
+        setIsGuest(false);
+        setSessionSaved(false);
+        setSessionResult(null);
+        handleRefresh();
+    };
+
+    /**
+     * Effect to listen for authentication state changes from Firebase
+     * Updates local user state when login/logout occurs
+     */
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserId(user.uid);
+                setIsGuest(false);
+            } else {
+                setUserId(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     // States for user-selected preferences and game status
     const [selectedFont, setSelectedFont] = useState(null);
@@ -111,7 +143,7 @@ function App() {
     useEffect(() => {
         const saveSession = async () => {
             try {
-                const userId = "test-user-1";
+                if (!userId || isGuest) return;
 
                 const response = await fetch(`http://localhost:8080/sessions/user/${userId}`, {
                     method: "POST",
@@ -141,11 +173,13 @@ function App() {
             }
         };
 
+        // trigger when session ends
         if (gameStarted && currentTime === 0 && !sessionSaved) {
             if (!isGuest) {
+                // logged user mode
                 saveSession();
             } else {
-                // compute stats locally without persisting
+                // compute stats locally without persisting (guest mode)
                 const accuracy = stats.totalTyped > 0
                     ? Math.round((stats.totalCorrect / stats.totalTyped) * 100)
                     : 0;
@@ -215,10 +249,15 @@ function App() {
                 <h1 className='title'>{!gameStarted ? 'Pick Your Preferences:' : (currentTime === 0 ? 'Nice Job!' : 'Type What You See :)')}</h1>
             </div>
             <div className='app-body' style={{fontFamily: selectedFont}}>
-                {!userId ? (
-                    <Login onGuest={handleGuest} />
+                {!userId && !isGuest ? (
+                    <Login onGuest={handleGuest} setUserId={setUserId} />
                 ) : (
                     <>
+                        {userId ? (
+                            <button className='logBtn' onClick={handleLogout}>Logout</button>
+                        ) : (
+                            <button className='logBtn' onClick={() => {setIsGuest(false)}}>Login</button>
+                        )}
                         {/* Conditionally renders SettingsPanel or game-related components */}
                         {!gameStarted ? (
                             <SettingsPanel
