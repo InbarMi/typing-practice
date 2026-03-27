@@ -24,6 +24,7 @@
 }
 
 .header {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,4 +77,11 @@
 
 .soundBtn:focus {
   outline: none;
+}
+
+.logBtn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  cursor: pointer;
 }
