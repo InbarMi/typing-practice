@@ -195,7 +195,7 @@ function App() {
                 setSessionSaved(true);
             }
         }
-    }, [currentTime, gameStarted, sessionSaved, stats])
+    }, [currentTime, gameStarted, sessionSaved, stats, userId, isGuest])
 
     /**
      * Effect to listen for the 'Enter' key press to restart the game after a session ends.
@@ -269,7 +269,7 @@ function App() {
                         ) : (
                             <>
                                 {/* Displays Stats when time is up, otherwise shows TextBlock for typing */}
-                                {(currentTime === 0 && sessionSaved) ? (
+                                {(currentTime === 0 && sessionResult) ? (
                                     <Stats stats={sessionResult} />
                                 ) : (
                                     <TextBlock
